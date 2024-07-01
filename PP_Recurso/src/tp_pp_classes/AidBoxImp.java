@@ -23,7 +23,7 @@ public class AidBoxImp implements AidBox {
     private int numberContainers;
 
     private static String[] aidBoxCodes = new String[10]; //Pra armazenar os codigos das aidboxes
-    private static double[] distances = new double[10]; // Matriz de distancias;
+    private static double[] distances = new double[10]; // Array de distancias;
     private static int numberAidboxes = 0;
 
     public AidBoxImp(String id, String code, String zone) {
@@ -56,7 +56,7 @@ public class AidBoxImp implements AidBox {
                 }
                 aidBoxCodes = newAidBoxCodes;
 
-                //Dobra o tamanho da matriz de distancias
+                //Dobra o tamanho do array de distancias
                 double[] newDistances = new double[distances.length * 2];
                 for (int i = 0; i < distances.length; i++) {
                     newDistances[i] = distances[i];
