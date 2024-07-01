@@ -20,6 +20,7 @@ import org.json.simple.parser.ParseException;
 public class DataManager {
 
     private Container[] containers;
+    private int numberContainers;
     private HttpProviderImp httpProvider = new HttpProviderImp();
 
     public Container[] ApiContainers() throws IOException, ParseException {
@@ -52,13 +53,33 @@ public class DataManager {
                 }
             }
             try {
-                containers.addContainer(new ContainerImp(id, code, capacity, containerType));
+                if(containers instanceof DataManager){
+                    
+                }
+                containers.addContainerM(new ContainerImp(id, code, capacity, containerType));
+                numberContainers++;
             } catch(ContainerInArrayException e){
                 
             }  
             }
             return containers;
         }
+    
+    
+    public boolean addContainerM(Container cntnr){
+        if(cntnr == null){
+            return false;
+        }
+        
+        for(int i = 0; i < numberContainers; i++){
+            if(containers[i].getType().equals(cntnr.getType())){
+                throw new ContainerInArrayException;
+            }
+        }
+        
+        this.containers[numberContainers++] = cntnr;
+        return true;
+    }
 
     
 

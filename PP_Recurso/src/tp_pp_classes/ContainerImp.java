@@ -9,6 +9,7 @@ import com.estg.core.ContainerType;
 import com.estg.core.Measurement;
 import com.estg.core.exceptions.MeasurementException;
 import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  *
@@ -45,7 +46,7 @@ public class ContainerImp implements Container {
     public ContainerType getType() {
         return this.type;
     }
-    
+
     public String getId() {
         return this.id;
     }
@@ -63,6 +64,24 @@ public class ContainerImp implements Container {
     @Override
     public boolean addMeasurement(Measurement msrmnt) throws MeasurementException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || !(obj instanceof ContainerImp)) {
+            return false;
+        }
+        ContainerImp container = (ContainerImp) obj;
+        return this.code == container.code;
     }
 
 }
