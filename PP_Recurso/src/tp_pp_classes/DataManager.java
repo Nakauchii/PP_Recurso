@@ -5,6 +5,7 @@
 package tp_pp_classes;
 
 import Exceptions.ContainerInArrayException;
+import com.estg.core.AidBox;
 import com.estg.core.Container;
 import com.estg.core.ContainerType;
 import http.HttpProviderImp;
@@ -21,6 +22,7 @@ import org.json.simple.parser.ParseException;
 public class DataManager {
 
     private Container[] containers;
+    private AidBox[] aidboxes;
     private int numberContainers;
     private HttpProviderImp httpProvider = new HttpProviderImp();
 
@@ -62,7 +64,7 @@ public class DataManager {
         return containers;
     }
 
-    public boolean addContainerM(Container cntnr) throws ContainerInArrayException{
+    public boolean addContainerM(Container cntnr) throws ContainerInArrayException {
         if (cntnr == null) {
             return false;
         }
@@ -91,6 +93,17 @@ public class DataManager {
         }
 
         return types;
+    }
+
+    public AidBox[] ApiAidboxes() throws IOException, ParseException {
+
+        String jsonResponse = httpProvider.getAidBoxes();
+        JSONParser parser = new JSONParser();
+        JSONArray AidBoxesArray = (JSONArray) parser.parse(jsonResponse);
+        
+        
+        
+        
     }
 
 }
