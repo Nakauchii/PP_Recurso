@@ -11,6 +11,7 @@ import com.estg.core.ContainerType;
 import com.estg.core.exceptions.ContainerException;
 import http.HttpProviderImp;
 import java.io.IOException;
+import java.util.Arrays;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -22,7 +23,7 @@ import org.json.simple.parser.ParseException;
  */
 public class DataManager {
 
-    private Container[] containers;
+    private Container[] containers = new Container[0]; // Inicializa o array containers
     private AidBox[] aidboxes;
     private int numberContainers, numberAidBoxes;
     private HttpProviderImp httpProvider = new HttpProviderImp();
@@ -52,14 +53,15 @@ public class DataManager {
                 if (types[j].equals(type)) {
                     containerType = types[j];
                     found = true;
-                } else {
-                    throw new ParseException(1);
                 }
+            }
+            if (!found) {
+                throw new ParseException(1);
             }
             try {
                 addContainerM(new ContainerImp(id, code, capacity, containerType));
             } catch (ContainerInArrayException e) {
-
+                e.printStackTrace();
             }
         }
         return containers;
@@ -74,6 +76,9 @@ public class DataManager {
             if (containers[i].equals(cntnr)) {
                 throw new ContainerInArrayException();
             }
+        }
+        if (numberContainers >= containers.length) {
+            containers = Arrays.copyOf(containers, containers.length + 1);
         }
         this.containers[numberContainers++] = cntnr;
         return true;
@@ -97,12 +102,12 @@ public class DataManager {
     }
 
     public Container findContainer(String code) {
-        if (code == null) {
+        if (code == null || containers == null) {
             return null;
         }
 
         for (int i = 0; i < containers.length; i++) {
-            if (containers[i].getCode().equals(code)) {
+            if (containers[i] != null && containers[i].getCode().equals(code)) {
                 return containers[i];
             }
         }
@@ -110,7 +115,6 @@ public class DataManager {
     }
 
     public AidBox[] ApiAidboxes() throws IOException, ParseException, ContainerException {
-
         String jsonResponse = httpProvider.getAidBoxes();
         JSONParser parser = new JSONParser();
         JSONArray AidBoxesArray = (JSONArray) parser.parse(jsonResponse);
@@ -129,12 +133,14 @@ public class DataManager {
             JSONArray containersFromAidBox = (JSONArray) aidbox.get("containers");
 
             for (int j = 0; j < containersFromAidBox.size(); j++) {
-                String codeContainer = (String) containersFromAidBox.get(i);
-                myAidBox.addContainer(findContainer(codeContainer));
+                String codeContainer = (String) containersFromAidBox.get(j);
+                Container container = findContainer(codeContainer);
+                if (container != null) {
+                    myAidBox.addContainer(container);
+                }
             }
             aidboxes[i] = myAidBox;
         }
         return aidboxes;
     }
-
 }

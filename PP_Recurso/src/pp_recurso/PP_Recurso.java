@@ -4,7 +4,9 @@
  */
 package pp_recurso;
 
+import com.estg.core.AidBox;
 import com.estg.core.Container;
+import com.estg.core.exceptions.ContainerException;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,5 +20,19 @@ import tp_pp_classes.DataManager;
  */
 public class PP_Recurso {
 
-    
+    public static void main(String[] args) {
+
+        try {
+            DataManager dataManager = new DataManager();
+            AidBox[] aidboxes = dataManager.ApiAidboxes();
+
+            for (AidBox aidbox : aidboxes) {
+                if (aidbox != null) {
+                    System.out.println(aidbox);
+                }
+            }
+        } catch (IOException | ParseException | ContainerException e) {
+            e.printStackTrace();
+        }
+    }
 }

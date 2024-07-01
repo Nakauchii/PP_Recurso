@@ -67,12 +67,6 @@ public class ContainerImp implements Container {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 7;
-        return hash;
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -83,5 +77,12 @@ public class ContainerImp implements Container {
         ContainerImp container = (ContainerImp) obj;
         return this.code == container.code;
     }
+
+    @Override
+    public String toString() {
+        return "ContainerImp{" + "id=" + id + ", code=" + code + ", capacity=" + capacity + ", type=" + type + '}';
+    }
+    
+    
 
 }
