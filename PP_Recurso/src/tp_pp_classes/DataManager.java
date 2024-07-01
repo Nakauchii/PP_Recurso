@@ -8,6 +8,7 @@ import Exceptions.ContainerInArrayException;
 import com.estg.core.AidBox;
 import com.estg.core.Container;
 import com.estg.core.ContainerType;
+import com.estg.core.exceptions.ContainerException;
 import http.HttpProviderImp;
 import java.io.IOException;
 import org.json.simple.JSONArray;
@@ -23,7 +24,7 @@ public class DataManager {
 
     private Container[] containers;
     private AidBox[] aidboxes;
-    private int numberContainers;
+    private int numberContainers, numberAidBoxes;
     private HttpProviderImp httpProvider = new HttpProviderImp();
 
     public Container[] ApiContainers() throws IOException, ParseException {
@@ -95,15 +96,45 @@ public class DataManager {
         return types;
     }
 
-    public AidBox[] ApiAidboxes() throws IOException, ParseException {
+    public Container findContainer(String code) {
+        if (code == null) {
+            return null;
+        }
+
+        for (int i = 0; i < containers.length; i++) {
+            if (containers[i].getCode().equals(code)) {
+                return containers[i];
+            }
+        }
+        return null;
+    }
+
+    public AidBox[] ApiAidboxes() throws IOException, ParseException, ContainerException {
 
         String jsonResponse = httpProvider.getAidBoxes();
         JSONParser parser = new JSONParser();
         JSONArray AidBoxesArray = (JSONArray) parser.parse(jsonResponse);
-        
-        
-        
-        
+
+        aidboxes = new AidBoxImp[AidBoxesArray.size()];
+
+        for (int i = 0; i < AidBoxesArray.size(); i++) {
+            JSONObject aidbox = (JSONObject) AidBoxesArray.get(i);
+
+            String id = (String) aidbox.get("_id");
+            String code = (String) aidbox.get("code");
+            String zone = (String) aidbox.get("Zona");
+
+            AidBoxImp myAidBox = new AidBoxImp(id, code, zone);
+
+            JSONArray containersFromAidBox = (JSONArray) aidbox.get("containers");
+
+            for (int j = 0; j < containersFromAidBox.size(); j++) {
+                String codeContainer = (String) containersFromAidBox.get(i);
+                myAidBox.addContainer(findContainer(codeContainer));
+            }
+            aidboxes[i] = myAidBox;
+        }
+        return aidboxes;
     }
 
 }

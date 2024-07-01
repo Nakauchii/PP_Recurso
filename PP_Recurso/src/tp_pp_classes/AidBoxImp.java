@@ -19,11 +19,15 @@ public class AidBoxImp implements AidBox{
     private String id;
     private String code;
     private String zone;
+    private Container[] containers;
+    private int numberAidBoxes;
 
     public AidBoxImp(String id, String code, String zone) {
         this.id = id;
         this.code = code;
         this.zone = zone;
+        this.containers = new ContainerImp[4];
+        this.numberAidBoxes = 0;
     }
 
     @Override
