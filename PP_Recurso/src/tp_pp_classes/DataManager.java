@@ -4,6 +4,7 @@
  */
 package tp_pp_classes;
 
+import Exceptions.ContainerInArrayException;
 import com.estg.core.Container;
 import com.estg.core.ContainerType;
 import http.HttpProviderImp;
@@ -53,35 +54,27 @@ public class DataManager {
                 }
             }
             try {
-                if(containers instanceof DataManager){
-                    
-                }
-                containers.addContainerM(new ContainerImp(id, code, capacity, containerType));
-                numberContainers++;
-            } catch(ContainerInArrayException e){
-                
-            }  
+                addContainerM(new ContainerImp(id, code, capacity, containerType));
+            } catch (ContainerInArrayException e) {
+
             }
-            return containers;
         }
-    
-    
-    public boolean addContainerM(Container cntnr){
-        if(cntnr == null){
+        return containers;
+    }
+
+    public boolean addContainerM(Container cntnr) throws ContainerInArrayException{
+        if (cntnr == null) {
             return false;
         }
-        
-        for(int i = 0; i < numberContainers; i++){
-            if(containers[i].getType().equals(cntnr.getType())){
-                throw new ContainerInArrayException;
+
+        for (int i = 0; i < numberContainers; i++) {
+            if (containers[i].equals(cntnr)) {
+                throw new ContainerInArrayException();
             }
         }
-        
         this.containers[numberContainers++] = cntnr;
         return true;
     }
-
-    
 
     public ContainerType[] getTypes() throws IOException, ParseException {
         String jsonResponse = httpProvider.getTypes();
