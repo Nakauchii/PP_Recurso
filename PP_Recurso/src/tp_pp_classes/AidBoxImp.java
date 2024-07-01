@@ -22,27 +22,87 @@ public class AidBoxImp implements AidBox {
     private Container[] containers;
     private int numberContainers;
 
+    private static String[] aidBoxCodes = new String[10]; //Pra armazenar os codigos das aidboxes
+    private static double[] distances = new double[10]; // Matriz de distancias;
+    private static int numberAidboxes = 0;
+
     public AidBoxImp(String id, String code, String zone) {
         this.id = id;
         this.code = code;
         this.zone = zone;
         this.containers = new ContainerImp[4];
         this.numberContainers = 0;
+
+        //Verifica se o code ja existe no array e add, se não existir
+        addAidBoxCode(code);
+    }
+
+    public void addAidBoxCode(String code) {
+        boolean exist = false;
+
+        for (int i = 0; i < numberAidboxes; i++) {
+            if (aidBoxCodes[i].equals(code)) {
+                exist = true;
+                break;
+            }
+        }
+
+        if (!exist) {
+            //Dobra o tamanho do array de codigos
+            if (numberAidboxes == aidBoxCodes.length) {
+                String[] newAidBoxCodes = new String[aidBoxCodes.length * 2];
+                for (int i = 0; i < aidBoxCodes.length; i++) {
+                    newAidBoxCodes[i] = aidBoxCodes[i];
+                }
+                aidBoxCodes = newAidBoxCodes;
+
+                //Dobra o tamanho da matriz de distancias
+                double[] newDistances = new double[distances.length * 2];
+                for (int i = 0; i < distances.length; i++) {
+                    newDistances[i] = distances[i];
+
+                }
+                distances = newDistances;
+            }
+            aidBoxCodes[numberAidboxes] = code;
+            numberAidboxes++;
+        }
     }
 
     @Override
     public String getCode() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return this.code;
     }
 
     @Override
     public String getZone() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return this.zone;
     }
 
     @Override
     public double getDistance(AidBox aidbox) throws AidBoxException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (aidbox == null) {
+            throw new AidBoxException("AidBox can't be null");
+        }
+
+        String targetCode = aidbox.getCode();
+        int index = -1;
+        int index2 = -1;
+
+        for (int i = 0; i < numberAidboxes; i++) {
+            if (aidBoxCodes[i].equals(this.code)) {
+                index = i;
+            }
+            if (aidBoxCodes[i].equals(targetCode)) {
+                index2 = i;
+            }
+        }
+
+        if (index == -1 || index2 == -1) {
+            throw new AidBoxException("One or both aidboxes don't exist in the distance matrix");
+        }
+
+        return distances[index2];
     }
 
     @Override
@@ -72,24 +132,47 @@ public class AidBoxImp implements AidBox {
 
     @Override
     public Container getContainer(ContainerType ct) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        for (int i = 0; i < numberContainers; i++) {
+            if (containers[i].getType().equals(ct)) {
+                return containers[i];
+            }
+        }
+        return null;
     }
 
     @Override
     public Container[] getContainers() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Container[] result = new Container[numberContainers];
+        for (int i = 0; i < numberContainers; i++) {
+            result[i] = containers[i];
+        }
+        return result;
     }
 
     @Override
     public void removeContainer(Container cntnr) throws AidBoxException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (cntnr == null) {
+            throw new AidBoxException("Container is null.");
+        }
+
+        boolean found = false;
+        for (int i = 0; i < numberContainers; i++) {
+            if (containers[i].equals(cntnr)) {
+                found = true;
+                containers[i] = containers[--numberContainers];
+                containers[numberContainers] = null;
+                break;
+            }
+        }
+
+        if (!found) {
+            throw new AidBoxException("Container does not exist.");
+        }
     }
 
     @Override
     public String toString() {
         return "AidBoxImp{" + "id=" + id + ", code=" + code + ", zone=" + zone + ", containers=" + containers + '}';
     }
-
-    
 
 }
