@@ -28,6 +28,8 @@ public class DataManager {
         JSONParser parser = new JSONParser();
         JSONArray containersArray = (JSONArray) parser.parse(jsonResponse);
 
+        ContainerType[] types = getTypes();
+
         containers = new ContainerImp[containersArray.size()];
 
         for (int i = 0; i < containersArray.size(); i++) {
@@ -36,11 +38,45 @@ public class DataManager {
             String id = (String) container.get("_id");
             String code = (String) container.get("code");
             int capacity = ((Long) container.get("capacity")).intValue();
-            ContainerType type = (ContainerType) container.get("type");
-            
-            containers[i] = new ContainerImp(id,code,capacity,type);
+
+            String type = (String) container.get("type");
+            int j = 0;
+            ContainerType containerType = null;
+            boolean found = false;
+            while (j < types.length && !found) {
+                if (types[j].equals(type)) {
+                    containerType = types[j];
+                    found = true;
+                } else {
+                    throw new ParseException(1);
+                }
+            }
+            try {
+                containers.addContainer(new ContainerImp(id, code, capacity, containerType));
+            } catch(ContainerInArrayException e){
+                
+            }  
+            }
+            return containers;
         }
-        return containers;
+
+    
+
+    public ContainerType[] getTypes() throws IOException, ParseException {
+        String jsonResponse = httpProvider.getTypes();
+        JSONParser parser = new JSONParser();
+        JSONObject jsonObject = (JSONObject) parser.parse(jsonResponse);
+
+        JSONArray typesArray = (JSONArray) jsonObject.get("types");
+        ContainerType[] types = new ContainerType[typesArray.size()];
+
+        for (int i = 0; i < typesArray.size(); i++) {
+            String typeName = (String) typesArray.get(i);
+            types[i] = new ContainerTypeImp(typeName);
+            System.out.println(types[i]);
+        }
+
+        return types;
     }
 
 }
