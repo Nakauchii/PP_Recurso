@@ -25,6 +25,10 @@ public class ContainerImp implements Container {
 
     private ContainerType type;
 
+    private Measurement[] measurements;
+
+    private int numberMeasurements;
+
     public ContainerImp(String id, String code, int capacity, ContainerType type) {
         this.id = id;
         this.code = code;
@@ -53,17 +57,64 @@ public class ContainerImp implements Container {
 
     @Override
     public Measurement[] getMeasurements() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Measurement[] copyMeasurements = new Measurement[numberMeasurements];
+        for (int i = 0; i < numberMeasurements; i++) {
+            copyMeasurements[i] = new MeasurementImp(measurements[i].getDate(), measurements[i].getValue());
+        }
+        return copyMeasurements;
     }
 
     @Override
     public Measurement[] getMeasurements(LocalDate ld) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        int count = 0;
+        for (int i = 0; i < numberMeasurements; i++) {
+            if (measurements[i].getDate().equals(ld)) {
+                count++;
+            }
+        }
+
+        Measurement[] result = new Measurement[count];
+        int index = 0;
+        for (int i = 0; i < numberMeasurements; i++) {
+            if (measurements[i].getDate().equals(ld)) {
+                result[index++] = new MeasurementImp(measurements[i].getDate(), measurements[i].getValue());
+            }
+        }
+        return result;
     }
 
     @Override
     public boolean addMeasurement(Measurement msrmnt) throws MeasurementException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (msrmnt == null) {
+            throw new MeasurementException();
+        }
+        if (msrmnt.getValue() < 0) {
+            throw new MeasurementException();
+        }
+        if (numberMeasurements > 0) {
+            if (msrmnt.getDate().isBefore(measurements[numberMeasurements - 1].getDate())) {
+                throw new MeasurementException();
+            }
+        }
+
+        //Verificar se ja tem um measurement com a mesma data
+        if (measurements[numberMeasurements].getDate().equals(msrmnt.getDate())) {
+            if (measurements[numberMeasurements].getValue() != msrmnt.getValue()) {
+                throw new MeasurementException();
+            }
+            return false; //Measurement ja existe
+        }
+
+        //Faz a adição
+        if (numberMeasurements == measurements.length) {
+            Measurement[] newMeasurements = new Measurement[measurements.length * 2];
+            for (int i = 0; i < numberMeasurements; i++) {
+                newMeasurements[i] = measurements[i];
+            }
+            measurements = newMeasurements;
+        }
+        measurements[numberMeasurements++] = msrmnt;
+        return true;
     }
 
     @Override
@@ -82,7 +133,5 @@ public class ContainerImp implements Container {
     public String toString() {
         return "ContainerImp{" + "id=" + id + ", code=" + code + ", capacity=" + capacity + ", type=" + type + '}';
     }
-    
-    
 
 }
