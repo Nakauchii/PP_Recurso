@@ -39,5 +39,12 @@ public class ContainerTypeImp implements ContainerType {
         final String other = (String) obj;
         return this.type.equals(other);
     }    
+
+    @Override
+    public String toString() {
+        return  "type=" + type ;
+    }
+    
+    
     
 }

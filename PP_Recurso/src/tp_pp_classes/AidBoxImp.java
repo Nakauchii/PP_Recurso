@@ -172,7 +172,17 @@ public class AidBoxImp implements AidBox {
 
     @Override
     public String toString() {
-        return "AidBoxImp{" + "id=" + id + ", code=" + code + ", zone=" + zone + ", containers=" + containers + '}';
+        String result = "Code: " + code + "\n"
+                + "Zone: " + zone + "\n"
+                + "Containers:\n";
+
+        for (int i = 0; i < numberContainers; i++) {
+            if (containers[i] != null) {
+                result += containers[i].toString() + "\n";
+            }
+        }
+
+        return result;
     }
 
 }

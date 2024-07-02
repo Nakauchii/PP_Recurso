@@ -23,7 +23,7 @@ import org.json.simple.parser.ParseException;
  */
 public class DataManager {
 
-    private Container[] containers = new Container[0]; // Inicializa o array containers
+    private Container[] containers;
     private AidBox[] aidboxes;
     private int numberContainers, numberAidBoxes;
     private HttpProviderImp httpProvider = new HttpProviderImp();
@@ -86,7 +86,7 @@ public class DataManager {
 
     public ContainerType[] getTypes() throws IOException, ParseException {
         String jsonResponse = httpProvider.getTypes();
-        JSONParser parser = new JSONParser();
+        JSONParser parser = new JSONParser(); 
         JSONObject jsonObject = (JSONObject) parser.parse(jsonResponse);
 
         JSONArray typesArray = (JSONArray) jsonObject.get("types");

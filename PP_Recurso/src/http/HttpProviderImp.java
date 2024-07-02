@@ -37,7 +37,7 @@ public class HttpProviderImp {
         String jsonResponse = httpProvider.getFromURL(url);
         JSONParser parser = new JSONParser();
         JSONArray types = (JSONArray) parser.parse(jsonResponse);
-        return types.toJSONString();
+        return types.get(0).toString();
     }
 
     public String getDistancesAidbox() throws IOException, ParseException {

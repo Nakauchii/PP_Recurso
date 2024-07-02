@@ -6,6 +6,7 @@ package pp_recurso;
 
 import com.estg.core.AidBox;
 import com.estg.core.Container;
+import com.estg.core.ContainerType;
 import com.estg.core.exceptions.ContainerException;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -20,7 +21,7 @@ import tp_pp_classes.DataManager;
  */
 public class PP_Recurso {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ContainerException {
 
         try {
             DataManager dataManager = new DataManager();
@@ -31,7 +32,7 @@ public class PP_Recurso {
                     System.out.println(aidbox);
                 }
             }
-        } catch (IOException | ParseException | ContainerException e) {
+        } catch (IOException | ParseException  e) {
             e.printStackTrace();
         }
     }
