@@ -176,24 +176,79 @@ public class InstitutionImp implements Institution {
         throw new ContainerException("Container with the given item type doesn't exist.");
     }
 
+    private int findVehicle(Vehicle vhcl) {
+        for (int i = 0; i < this.nVehicle; i++) {
+            if (this.vehicles[i].equals(vhcl)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private void expandVehicle() {
+        Vehicle[] tmpVehicle = new VehicleImp[this.vehicles.length * EXPAND];
+
+        for (int i = 0; i < this.nVehicle; i++) {
+            tmpVehicle[i] = this.vehicles[i];
+        }
+        this.vehicles = tmpVehicle;
+    }
+
     @Override
     public Vehicle[] getVehicles() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Vehicle[] tmpVehicle = new VehicleImp[this.nVehicle];
+
+        for (int i = 0; i < this.nVehicle; i++) {
+            tmpVehicle[i] = this.vehicles[i];
+        }
+
+        return tmpVehicle;
     }
 
     @Override
     public boolean addVehicle(Vehicle vhcl) throws VehicleException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (this.nVehicle == this.vehicles.length) {
+            expandVehicle();
+        }
+
+        if (vhcl == null) {
+            return false;
+        }
+
+        if (findVehicle(vhcl) != -1) {
+            return false;
+        }
+
+        this.vehicles[this.nVehicle++] = vhcl;
+        return true;
     }
 
     @Override
     public void disableVehicle(Vehicle vhcl) throws VehicleException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if(findVehicle(vhcl) == -1) {
+            throw new VehicleException();
+        }
+        
+        VehicleImp myVehicle = (VehicleImp) vhcl;
+        if(!myVehicle.isEnabled()){
+            throw new VehicleException();
+        }
+        
+        myVehicle.setEnabled(false);
     }
 
     @Override
     public void enableVehicle(Vehicle vhcl) throws VehicleException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (findVehicle(vhcl) == -1) {
+            throw new VehicleException();
+        }
+
+        VehicleImp myVehicle = (VehicleImp) vhcl;
+        if (!myVehicle.isEnabled()) {
+            throw new VehicleException();
+        }
+
+        myVehicle.setEnabled(false);
     }
 
     @Override
@@ -218,7 +273,16 @@ public class InstitutionImp implements Institution {
 
     @Override
     public double getDistance(AidBox aidbox) throws AidBoxException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (aidbox == null) {
+            throw new AidBoxException("Aid Box is Invalid");
+        }
+
+        LocationImp location = ((AidBoxImp) aidbox).getLocation("base");
+        if (location == null) {
+            throw new AidBoxException("Aid Box not found");
+        }
+
+        return location.getDistance();
     }
 
 }

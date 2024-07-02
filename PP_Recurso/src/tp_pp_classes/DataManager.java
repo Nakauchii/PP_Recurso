@@ -6,6 +6,7 @@ package tp_pp_classes;
 
 import Exceptions.AidBoxInArrayException;
 import Exceptions.ContainerInArrayException;
+import Exceptions.LocationInArrayException;
 import com.estg.core.AidBox;
 import com.estg.core.Container;
 import com.estg.core.ContainerType;
@@ -28,7 +29,8 @@ public class DataManager {
 
     private Container[] containers;
     private AidBox[] aidboxes;
-    private int numberContainers, numberAidBoxes;
+    private LocationImp[] locations;
+    private int numberContainers, numberAidBoxes, numberLocations;
     private final int EXPAND = 2;
     private HttpProviderImp httpProvider = new HttpProviderImp();
 
@@ -149,7 +151,7 @@ public class DataManager {
             return null;
         }
 
-        for (int i = 0; i < containers.length; i++) {
+        for (int i = 0; i < numberContainers; i++) {
             if (containers[i] != null && containers[i].getCode().equals(code)) {
                 return containers[i];
             }
@@ -229,6 +231,65 @@ public class DataManager {
         AidBox[] result = new AidBoxImp[aidboxes.length];
         for (int i = 0; i < aidboxes.length; i++) {
             result[i] = aidboxes[i];
+        }
+        return result;
+    }
+
+    public void ApiLocation() throws IOException, ParseException, LocationInArrayException {
+        String jsonResponse = httpProvider.getDistancesAidbox();
+        JSONParser parser = new JSONParser();
+        JSONArray locationsArray = (JSONArray) parser.parse(jsonResponse);
+
+        locations = new LocationImp[locationsArray.size()];
+
+        for (int i = 0; i < locationsArray.size(); i++) {
+            JSONObject location = (JSONObject) locationsArray.get(i);
+
+            String from = (String) location.get("from");
+            JSONArray toArray = (JSONArray) location.get("to");
+
+            for (int j = 0; j < toArray.size(); j++) {
+                JSONObject toObject = (JSONObject) toArray.get(i);
+
+                String name = (String) toObject.get("name");
+                double distance = (double) toObject.get("distance");
+                double duration = (double) toObject.get("duration");
+                
+                addLocationM(new LocationImp(name, distance, duration));
+            }
+        }
+    }
+
+    public boolean addLocationM(LocationImp loc) throws LocationInArrayException {
+        if (loc == null) {
+            return false;
+        }
+
+        for (int i = 0; i < numberLocations; i++) {
+            if (locations[i].equals(loc)) {
+                throw new LocationInArrayException();
+            }
+        }
+        if (numberLocations >= locations.length) {
+            expandLocationM();
+        }
+        this.locations[numberLocations++] = loc;
+        return true;
+    }
+
+    private void expandLocationM() {
+        LocationImp[] location = new LocationImp[this.locations.length * EXPAND];
+
+        for (int i = 0; i < this.numberLocations; i++) {
+            location[i] = this.locations[i];
+        }
+        this.locations = location;
+    }
+    
+    public LocationImp[] getLocations() {
+        LocationImp[] result = new LocationImp[numberLocations];
+        for (int i = 0; i < numberLocations; i++) {
+            result[i] = locations[i];
         }
         return result;
     }

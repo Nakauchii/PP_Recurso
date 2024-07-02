@@ -16,10 +16,20 @@ public class VehicleImp implements Vehicle {
     private String code;
     private VehicleCapacitiesImp capacities;
     private int numberContainerTypes;
+    private boolean isEnable;
     
     public VehicleImp(String code, int numberContainerTypes) {
         this.code = code;
         this.capacities = new VehicleCapacitiesImp(numberContainerTypes);
+        this.isEnable = true;
+    }
+    
+    public boolean isEnabled() {
+        return isEnable;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.isEnable = enabled;
     }
 
     @Override

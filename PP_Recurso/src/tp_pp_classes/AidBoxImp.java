@@ -20,54 +20,21 @@ public class AidBoxImp implements AidBox {
     private String id;
     private String code;
     private String zone;
+    private LocationImp[] locations;
     private Container[] containers;
     private int numberContainers;
-
-    private static String[] aidBoxCodes = new String[10]; //Pra armazenar os codigos das aidboxes
-    private static double[] distances = new double[10]; // Array de distancias;
-    private static int numberAidboxes = 0;
+    private final int MAX = 4;
+    private final int EXPAND = 2;
+    private int nLocations;
 
     public AidBoxImp(String id, String code, String zone) {
         this.id = id;
         this.code = code;
         this.zone = zone;
-        this.containers = new ContainerImp[4];
+        this.containers = new ContainerImp[MAX];
+        this.locations = new LocationImp[MAX];
         this.numberContainers = 0;
 
-        //Verifica se o code ja existe no array e add, se não existir
-        addAidBoxCode(code);
-    }
-
-    public void addAidBoxCode(String code) {
-        boolean exist = false;
-
-        for (int i = 0; i < numberAidboxes; i++) {
-            if (aidBoxCodes[i].equals(code)) {
-                exist = true;
-                break;
-            }
-        }
-
-        if (!exist) {
-            //Dobra o tamanho do array de codigos
-            if (numberAidboxes == aidBoxCodes.length) {
-                String[] newAidBoxCodes = new String[aidBoxCodes.length * 2];
-                for (int i = 0; i < aidBoxCodes.length; i++) {
-                    newAidBoxCodes[i] = aidBoxCodes[i];
-                }
-                aidBoxCodes = newAidBoxCodes;
-
-                //Dobra o tamanho do array de distancias
-                double[] newDistances = new double[distances.length * 2];
-                for (int i = 0; i < distances.length; i++) {
-                    newDistances[i] = distances[i];
-
-                }
-                distances = newDistances;
-            }
-            aidBoxCodes[numberAidboxes] = code;
-            numberAidboxes++;
-        }
     }
 
     @Override
@@ -79,31 +46,19 @@ public class AidBoxImp implements AidBox {
     public String getZone() {
         return this.zone;
     }
+    
+    public LocationImp getLocation(String code){
+        for(int i = 0; i < this.nLocations; i++){
+            if(this.locations[i].getCode().equals(code)){
+                return locations[i];
+            }
+        }
+        return null;
+    }
 
     @Override
     public double getDistance(AidBox aidbox) throws AidBoxException {
-        if (aidbox == null) {
-            throw new AidBoxException("AidBox can't be null");
-        }
-
-        String targetCode = aidbox.getCode();
-        int index = -1;
-        int index2 = -1;
-
-        for (int i = 0; i < numberAidboxes; i++) {
-            if (aidBoxCodes[i].equals(this.code)) {
-                index = i;
-            }
-            if (aidBoxCodes[i].equals(targetCode)) {
-                index2 = i;
-            }
-        }
-
-        if (index == -1 || index2 == -1) {
-            throw new AidBoxException("One or both aidboxes don't exist in the distance matrix");
-        }
-
-        return distances[index2];
+       throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override

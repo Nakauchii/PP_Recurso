@@ -8,13 +8,13 @@ package tp_pp_classes;
  *
  * @author fabio
  */
-public class Location {
+public class LocationImp {
 
     private String code;
     private double distance;
     private double duration;
 
-    public Location(String code, double distance, double duration) {
+    public LocationImp(String code, double distance, double duration) {
         this.code = code;
         this.distance = distance;
         this.duration = duration;
@@ -44,7 +44,7 @@ public class Location {
             return false;
         }
 
-        return this.code.equals(((Location) obj).code);
+        return this.code.equals(((LocationImp) obj).code);
     }
 
     @Override
