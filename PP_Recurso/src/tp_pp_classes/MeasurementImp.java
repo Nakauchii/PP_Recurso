@@ -15,12 +15,23 @@ import java.util.Objects;
  */
 public class MeasurementImp implements Measurement {
     
+    private String containerCode;
     private LocalDateTime date;
     private double value;
 
     public MeasurementImp(LocalDateTime date, double value) {
         this.date = date;
         this.value = value;
+    }
+
+    public MeasurementImp(String containerCode, LocalDateTime date, double value) {
+        this.containerCode = containerCode;
+        this.date = date;
+        this.value = value;
+    }
+
+    public String getContainerCode() {
+        return containerCode;
     }
 
     @Override
@@ -35,7 +46,7 @@ public class MeasurementImp implements Measurement {
 
     @Override
     public String toString() {
-        return "Measurement{date: " + date + ", value: " + value + "}"; 
+        return "Measurement{containerCode: " + containerCode + "date: " + date + ", value: " + value + "}"; 
     }
 
     

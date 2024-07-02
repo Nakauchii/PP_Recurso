@@ -10,9 +10,12 @@ import Exceptions.LocationInArrayException;
 import com.estg.core.AidBox;
 import com.estg.core.Container;
 import com.estg.core.ContainerType;
+import com.estg.core.Measurement;
 import com.estg.core.exceptions.ContainerException;
+import com.estg.core.exceptions.MeasurementException;
 import http.HttpProviderImp;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,7 +33,8 @@ public class DataManager {
     private Container[] containers;
     private AidBox[] aidboxes;
     private LocationImp[] locations;
-    private int numberContainers, numberAidBoxes, numberLocations;
+    private Measurement[] measurements;
+    private int numberContainers, numberAidBoxes, numberLocations, numberMeasurements;
     private final int EXPAND = 2;
     private HttpProviderImp httpProvider = new HttpProviderImp();
 
@@ -254,7 +258,7 @@ public class DataManager {
                 String name = (String) toObject.get("name");
                 double distance = (double) toObject.get("distance");
                 double duration = (double) toObject.get("duration");
-                
+
                 addLocationM(new LocationImp(name, distance, duration));
             }
         }
@@ -285,7 +289,7 @@ public class DataManager {
         }
         this.locations = location;
     }
-    
+
     public LocationImp[] getLocations() {
         LocationImp[] result = new LocationImp[numberLocations];
         for (int i = 0; i < numberLocations; i++) {
@@ -293,4 +297,57 @@ public class DataManager {
         }
         return result;
     }
+
+    public void ApiMeasurement() throws IOException, ParseException, MeasurementException {
+
+        String jsonResponse = httpProvider.getReadings();
+        JSONParser parser = new JSONParser();
+        JSONArray measurementsArray = (JSONArray) parser.parse(jsonResponse);
+
+        measurements = new Measurement[measurementsArray.size()];
+
+        for (int i = 0; i < measurementsArray.size(); i++) {
+            JSONObject measurement = (JSONObject) measurementsArray.get(i);
+
+            String contentor = (String) measurement.get("contentor");
+            LocalDateTime data = (LocalDateTime) measurement.get("data");
+            long valor = (long) measurement.get("valor");
+            
+            addMeasurementM(new MeasurementImp(contentor, data, valor));
+        }
+    }
+
+    public boolean addMeasurementM(MeasurementImp msrnt) throws MeasurementException {
+        if (msrnt == null) {
+            return false;
+        }
+        for (int i = 0; i < numberMeasurements; i++) {
+            if (measurements[i].equals(msrnt)) {
+                throw new MeasurementException();
+            }
+        }
+        if (numberMeasurements >= measurements.length) {
+            expandMeasurementM();
+        }
+        this.measurements[numberMeasurements++] = msrnt;
+        return true;
+    }
+
+    private void expandMeasurementM() {
+        Measurement[] newMeasurements = new Measurement[this.measurements.length * EXPAND];
+
+        for (int i = 0; i < this.numberMeasurements; i++) {
+            newMeasurements[i] = this.measurements[i];
+        }
+        this.measurements = newMeasurements;
+    }
+
+    public Measurement[] getMeasurement() {
+        Measurement[] result = new Measurement[numberMeasurements];
+        for (int i = 0; i < numberMeasurements; i++) {
+            result[i] = measurements[i];
+        }
+        return result;
+    }
+
 }
