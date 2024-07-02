@@ -28,6 +28,7 @@ public class DataManager {
     private Container[] containers;
     private AidBox[] aidboxes;
     private int numberContainers, numberAidBoxes;
+    private final int EXPAND = 2;
     private HttpProviderImp httpProvider = new HttpProviderImp();
 
     public DataManager() {
@@ -39,7 +40,11 @@ public class DataManager {
             Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
-            ApiAidboxes();
+            try {
+                ApiAidboxes();
+            } catch (ContainerInArrayException ex) {
+                Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } catch (IOException ex) {
             Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
@@ -57,8 +62,6 @@ public class DataManager {
 
         ContainerType[] types = getTypes();
 
-        System.out.println("");
-        
         containers = new ContainerImp[containersArray.size()];
 
         for (int i = 0; i < containersArray.size(); i++) {
@@ -98,6 +101,15 @@ public class DataManager {
         return result;
     }
 
+    private void expandContainerM() {
+        Container[] container = new ContainerImp[this.containers.length * EXPAND];
+
+        for (int i = 0; i < this.numberContainers; i++) {
+            containers[i] = this.containers[i];
+        }
+        this.containers = containers;
+    }
+
     public boolean addContainerM(Container cntnr) throws ContainerInArrayException {
         if (cntnr == null) {
             return false;
@@ -109,7 +121,7 @@ public class DataManager {
             }
         }
         if (numberContainers >= containers.length) {
-            containers = Arrays.copyOf(containers, containers.length + 1);
+            expandContainerM();
         }
         this.containers[numberContainers++] = cntnr;
         return true;
@@ -144,7 +156,7 @@ public class DataManager {
         return null;
     }
 
-    public void ApiAidboxes() throws IOException, ParseException, ContainerException {
+    public void ApiAidboxes() throws IOException, ParseException, ContainerException, ContainerInArrayException {
         String jsonResponse = httpProvider.getAidBoxes();
         JSONParser parser = new JSONParser();
         JSONArray AidBoxesArray = (JSONArray) parser.parse(jsonResponse);
@@ -169,8 +181,47 @@ public class DataManager {
                     myAidBox.addContainer(container);
                 }
             }
-            aidboxes[i] = myAidBox;
+            addAidBoxM(myAidBox);
         }
+    }
+
+    public AidBox findAidBox(String code) {
+        if (code == null || aidboxes == null) {
+            return null;
+        }
+
+        for (int i = 0; i < aidboxes.length; i++) {
+            if (aidboxes[i] != null && aidboxes[i].getCode().equals(code)) {
+                return aidboxes[i];
+            }
+        }
+        return null;
+    }
+
+    private void expandAidBoxM() {
+        AidBox[] aidBox = new AidBoxImp[this.aidboxes.length * EXPAND];
+
+        for (int i = 0; i < this.numberAidBoxes; i++) {
+            aidboxes[i] = this.aidboxes[i];
+        }
+        this.aidboxes = aidboxes;
+    }
+
+    public boolean addAidBoxM(AidBox aid) throws ContainerInArrayException {
+        if (aid == null) {
+            return false;
+        }
+
+        for (int i = 0; i < numberAidBoxes; i++) {
+            if (aidboxes[i].equals(aid)) {
+                throw new ContainerInArrayException();
+            }
+        }
+        if (numberAidBoxes >= aidboxes.length) {
+            expandAidBoxM();
+        }
+        this.aidboxes[numberAidBoxes++] = aid;
+        return true;
     }
 
     public AidBox[] getAidBox() {

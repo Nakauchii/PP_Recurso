@@ -9,6 +9,7 @@ import com.estg.core.Container;
 import com.estg.core.ContainerType;
 import com.estg.core.exceptions.AidBoxException;
 import com.estg.core.exceptions.ContainerException;
+import java.util.Objects;
 
 /**
  *
@@ -185,4 +186,19 @@ public class AidBoxImp implements AidBox {
         return result;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AidBoxImp other = (AidBoxImp) obj;
+        return Objects.equals(this.code, other.code);
+    }
+    
 }

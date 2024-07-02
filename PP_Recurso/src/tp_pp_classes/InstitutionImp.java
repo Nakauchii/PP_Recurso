@@ -74,11 +74,11 @@ public class InstitutionImp implements Institution {
         }
         return false;
     }
-    
-    private void expandAidBox(){
+
+    private void expandAidBox() {
         AidBox[] aidBox = new AidBoxImp[this.aidBoxes.length * EXPAND];
-        
-        for(int i = 0; i < this.nAidBox; i++){
+
+        for (int i = 0; i < this.nAidBox; i++) {
             aidBox[i] = this.aidBoxes[i];
         }
         this.aidBoxes = aidBox;
@@ -86,22 +86,22 @@ public class InstitutionImp implements Institution {
 
     @Override
     public boolean addAidBox(AidBox aidbox) throws AidBoxException {
-        if(aidbox == null){
+        if (aidbox == null) {
             throw new AidBoxException();
         }
-        
-        if(findAidBox(aidbox) != -1){
+
+        if (findAidBox(aidbox) != -1) {
             return false;
         }
-        
-        if(hasDuplicateContainers(aidbox)){
+
+        if (hasDuplicateContainers(aidbox)) {
             throw new AidBoxException();
         }
-        
-        if(this.nAidBox == this.aidBoxes.length){
+
+        if (this.nAidBox == this.aidBoxes.length) {
             expandAidBox();
         }
-        
+
         this.aidBoxes[nAidBox++] = aidbox;
         return true;
     }
@@ -114,8 +114,8 @@ public class InstitutionImp implements Institution {
     @Override
     public AidBox[] getAidBoxes() {
         AidBox[] aidBox = new AidBoxImp[nAidBox];
-        for(int i = 0; i < nAidBox; i++){
-            if(aidBoxes[i] != null){
+        for (int i = 0; i < nAidBox; i++) {
+            if (aidBoxes[i] != null) {
                 aidBox[i] = aidBoxes[i];
             }
         }
@@ -124,7 +124,19 @@ public class InstitutionImp implements Institution {
 
     @Override
     public Container getContainer(AidBox aidbox, ContainerType ct) throws ContainerException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (aidbox == null) {
+            throw new ContainerException("Aidbox doesn´t exist.");
+        }
+
+        Container[] containers = aidbox.getContainers();
+
+        for (int i = 0; i < containers.length; i++) {
+            if (containers[i] != null && containers[i].getType().equals(ct)) {
+                return containers[i];
+            }
+        }
+
+        throw new ContainerException("Container with the given item type doesn't exist.");
     }
 
     @Override
