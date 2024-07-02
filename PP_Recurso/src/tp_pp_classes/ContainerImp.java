@@ -131,7 +131,7 @@ public class ContainerImp implements Container {
 
     @Override
     public String toString() {
-        return "ContainerImp{" + "id=" + id + ", code=" + code + ", capacity=" + capacity + ", type=" + type + '}';
+        return "ContainerImp{" + "id=" + id + ", code=" + code + ", capacity=" + capacity + type + '}';
     }
 
 }

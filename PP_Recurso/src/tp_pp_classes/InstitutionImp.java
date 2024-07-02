@@ -86,7 +86,24 @@ public class InstitutionImp implements Institution {
 
     @Override
     public boolean addAidBox(AidBox aidbox) throws AidBoxException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if(aidbox == null){
+            throw new AidBoxException();
+        }
+        
+        if(findAidBox(aidbox) != -1){
+            return false;
+        }
+        
+        if(hasDuplicateContainers(aidbox)){
+            throw new AidBoxException();
+        }
+        
+        if(this.nAidBox == this.aidBoxes.length){
+            expandAidBox();
+        }
+        
+        this.aidBoxes[nAidBox++] = aidbox;
+        return true;
     }
 
     @Override
@@ -96,7 +113,13 @@ public class InstitutionImp implements Institution {
 
     @Override
     public AidBox[] getAidBoxes() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        AidBox[] aidBox = new AidBoxImp[nAidBox];
+        for(int i = 0; i < nAidBox; i++){
+            if(aidBoxes[i] != null){
+                aidBox[i] = aidBoxes[i];
+            }
+        }
+        return aidBox;
     }
 
     @Override

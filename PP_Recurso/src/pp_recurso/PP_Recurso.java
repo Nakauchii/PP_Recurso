@@ -23,17 +23,12 @@ public class PP_Recurso {
 
     public static void main(String[] args) throws ContainerException {
 
-        try {
-            DataManager dataManager = new DataManager();
-            AidBox[] aidboxes = dataManager.ApiAidboxes();
-
-            for (AidBox aidbox : aidboxes) {
-                if (aidbox != null) {
-                    System.out.println(aidbox);
-                }
+        DataManager dataManager = new DataManager();
+        AidBox[] aidboxes = dataManager.getAidBox();
+        for (AidBox aidbox : aidboxes) {
+            if (aidbox != null) {
+                System.out.println(aidbox.toString());
             }
-        } catch (IOException | ParseException  e) {
-            e.printStackTrace();
         }
     }
 }

@@ -12,6 +12,8 @@ import com.estg.core.exceptions.ContainerException;
 import http.HttpProviderImp;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -28,7 +30,26 @@ public class DataManager {
     private int numberContainers, numberAidBoxes;
     private HttpProviderImp httpProvider = new HttpProviderImp();
 
-    public Container[] ApiContainers() throws IOException, ParseException {
+    public DataManager() {
+        try {
+            ApiContainers();
+        } catch (IOException ex) {
+            Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
+            Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            ApiAidboxes();
+        } catch (IOException ex) {
+            Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
+            Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ContainerException ex) {
+            Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void ApiContainers() throws IOException, ParseException {
 
         String jsonResponse = httpProvider.getContainers();
         JSONParser parser = new JSONParser();
@@ -36,6 +57,8 @@ public class DataManager {
 
         ContainerType[] types = getTypes();
 
+        System.out.println("");
+        
         containers = new ContainerImp[containersArray.size()];
 
         for (int i = 0; i < containersArray.size(); i++) {
@@ -54,6 +77,7 @@ public class DataManager {
                     containerType = types[j];
                     found = true;
                 }
+                j++;
             }
             if (!found) {
                 throw new ParseException(1);
@@ -64,7 +88,14 @@ public class DataManager {
                 e.printStackTrace();
             }
         }
-        return containers;
+    }
+
+    public Container[] getContainers() {
+        Container[] result = new ContainerImp[numberContainers];
+        for (int i = 0; i < numberContainers; i++) {
+            result[i] = containers[i];
+        }
+        return result;
     }
 
     public boolean addContainerM(Container cntnr) throws ContainerInArrayException {
@@ -86,7 +117,7 @@ public class DataManager {
 
     public ContainerType[] getTypes() throws IOException, ParseException {
         String jsonResponse = httpProvider.getTypes();
-        JSONParser parser = new JSONParser(); 
+        JSONParser parser = new JSONParser();
         JSONObject jsonObject = (JSONObject) parser.parse(jsonResponse);
 
         JSONArray typesArray = (JSONArray) jsonObject.get("types");
@@ -95,7 +126,6 @@ public class DataManager {
         for (int i = 0; i < typesArray.size(); i++) {
             String typeName = (String) typesArray.get(i);
             types[i] = new ContainerTypeImp(typeName);
-            System.out.println(types[i]);
         }
 
         return types;
@@ -114,7 +144,7 @@ public class DataManager {
         return null;
     }
 
-    public AidBox[] ApiAidboxes() throws IOException, ParseException, ContainerException {
+    public void ApiAidboxes() throws IOException, ParseException, ContainerException {
         String jsonResponse = httpProvider.getAidBoxes();
         JSONParser parser = new JSONParser();
         JSONArray AidBoxesArray = (JSONArray) parser.parse(jsonResponse);
@@ -141,6 +171,13 @@ public class DataManager {
             }
             aidboxes[i] = myAidBox;
         }
-        return aidboxes;
+    }
+
+    public AidBox[] getAidBox() {
+        AidBox[] result = new AidBoxImp[aidboxes.length];
+        for (int i = 0; i < aidboxes.length; i++) {
+            result[i] = aidboxes[i];
+        }
+        return result;
     }
 }
