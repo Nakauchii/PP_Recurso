@@ -7,6 +7,7 @@ package tp_pp_classes;
 import com.estg.core.Measurement;
 import com.estg.core.exceptions.MeasurementException;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  *
@@ -36,6 +37,28 @@ public class MeasurementImp implements Measurement {
     public String toString() {
         return "Measurement{date: " + date + ", value: " + value + "}"; 
     }
+
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final MeasurementImp other = (MeasurementImp) obj;
+        if (Double.doubleToLongBits(this.value) != Double.doubleToLongBits(other.value)) {
+            return false;
+        }
+        return Objects.equals(this.date, other.date);
+    }
+    
+    
+    
     
     
     

@@ -45,7 +45,7 @@ public class InstitutionImp implements Institution {
         this.nVehicle = 0;
         this.aidBoxes = new AidBoxImp[MAX];
         this.vehicles = new VehicleImp[MAX];
-        //this.pickingMaps = new PickingMap[MAX];
+        this.pickingMaps = new PickingMap[MAX];
         //this.reports = new Report[MAX_OBJECT];
     }
 
@@ -106,9 +106,46 @@ public class InstitutionImp implements Institution {
         return true;
     }
 
+    private int findContainer(Container ct) {
+        for (int i = 0; i < nAidBox; i++) {
+            Container container = this.aidBoxes[i].getContainer(ct.getType());
+            if (container.equals(ct)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private int findMeasuremet(Measurement msrmnt, Container cntnr) {
+        Measurement[] measurements = cntnr.getMeasurements();
+
+        for (int i = 0; i < measurements.length; i++) {
+            if (measurements[i].equals(msrmnt)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     @Override
     public boolean addMeasurement(Measurement msrmnt, Container cntnr) throws ContainerException, MeasurementException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (findContainer(cntnr) == -1) {
+            throw new ContainerException();
+        }
+
+        if (findMeasuremet(msrmnt, cntnr) != -1) {
+            return false;
+        }
+        if (msrmnt.getValue() > cntnr.getCapacity()) {
+            throw new ContainerException();
+        }
+        try {
+            this.aidBoxes[findContainer(cntnr)].getContainer(cntnr.getType()).addMeasurement(msrmnt);
+        } catch (MeasurementException exc) {
+            throw new ContainerException();
+        }
+
+        return true;
     }
 
     @Override

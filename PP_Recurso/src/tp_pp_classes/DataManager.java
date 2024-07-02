@@ -144,7 +144,7 @@ public class DataManager {
         return types;
     }
 
-    public Container findContainer(String code) {
+    private Container findContainer(String code) {
         if (code == null || containers == null) {
             return null;
         }
@@ -186,7 +186,7 @@ public class DataManager {
         }
     }
 
-    public AidBox findAidBox(String code) {
+    private AidBox findAidBox(String code) {
         if (code == null || aidboxes == null) {
             return null;
         }
