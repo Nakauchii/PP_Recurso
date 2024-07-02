@@ -17,16 +17,71 @@ import com.estg.core.exceptions.VehicleException;
 import com.estg.pickingManagement.PickingMap;
 import com.estg.pickingManagement.Vehicle;
 import java.time.LocalDateTime;
+import tp_pp_management.VehicleImp;
 
 /**
  *
  * @author fabio
  */
-public class InstitutionImp implements Institution{
+public class InstitutionImp implements Institution {
+
+    private static final int MAX = 20;
+    private static final int EXPAND = 2;
+
+    private int nAidBox;
+    private int nVehicle;
+    private int nPickingMap;
+    private int nReport;
+    private AidBox[] aidBoxes;
+    private Vehicle[] vehicles;
+    private String name;
+    private PickingMap[] pickingMaps;
+    //private Report[] reports;
+
+    public InstitutionImp(String name) {
+        this.name = name;
+        this.nReport = 0;
+        this.nAidBox = 0;
+        this.nVehicle = 0;
+        this.aidBoxes = new AidBoxImp[MAX];
+        this.vehicles = new VehicleImp[MAX];
+        //this.pickingMaps = new PickingMap[MAX];
+        //this.reports = new Report[MAX_OBJECT];
+    }
 
     @Override
     public String getName() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return this.name;
+    }
+
+    private int findAidBox(AidBox aidBox) {
+        for (int i = 0; i < nAidBox; i++) {
+            if (this.aidBoxes[i].equals(aidBox)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private boolean hasDuplicateContainers(AidBox aidbox) {
+        Container[] containers = aidbox.getContainers();
+        for (int i = 0; i < containers.length; i++) {
+            for (int j = i + 1; j < containers.length; j++) {
+                if (i != j && containers[i].getType().equals(containers[j].getType())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    private void expandAidBox(){
+        AidBox[] aidBox = new AidBoxImp[this.aidBoxes.length * EXPAND];
+        
+        for(int i = 0; i < this.nAidBox; i++){
+            aidBox[i] = this.aidBoxes[i];
+        }
+        this.aidBoxes = aidBox;
     }
 
     @Override
@@ -93,5 +148,5 @@ public class InstitutionImp implements Institution{
     public double getDistance(AidBox aidbox) throws AidBoxException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
 }
