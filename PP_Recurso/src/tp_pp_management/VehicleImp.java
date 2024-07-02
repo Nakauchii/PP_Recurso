@@ -14,14 +14,12 @@ import com.estg.pickingManagement.Vehicle;
 public class VehicleImp implements Vehicle {
     
     private String code;
-    private ContainerType[] containerTypes;
-    private double[] capacities;
+    private VehicleCapacitiesImp capacities;
     private int numberContainerTypes;
     
     public VehicleImp(String code, int numberContainerTypes) {
         this.code = code;
-        this.containerTypes = new ContainerType[numberContainerTypes];
-        this.capacities = new double[numberContainerTypes];
+        this.capacities = new VehicleCapacitiesImp(numberContainerTypes);
     }
 
     @Override
@@ -29,16 +27,13 @@ public class VehicleImp implements Vehicle {
         return this.code;
     }
 
-    
-    //Verificar se é isso mesmo, pq não entendi o javadoc
     @Override
     public double getCapacity(ContainerType ct) {
-        for(int i = 0; i < numberContainerTypes; i++) {
-            if(containerTypes[i] != null && containerTypes[i].equals(ct)) {
-                return capacities[i];
-            }
-        }
-        return 0;
+        return capacities.getCapacity(ct);
+    }
+    
+    public void addContainerCapacity(ContainerType containerType, double capacity) {
+        capacities.addCapacity(containerType, capacity);
     }
     
 }
