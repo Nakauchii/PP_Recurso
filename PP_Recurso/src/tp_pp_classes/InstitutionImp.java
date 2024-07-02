@@ -33,6 +33,7 @@ public class InstitutionImp implements Institution {
     private int nPickingMap;
     private int nReport;
     private AidBox[] aidBoxes;
+    private Container[] containers;
     private Vehicle[] vehicles;
     private String name;
     private PickingMap[] pickingMaps;
@@ -54,13 +55,13 @@ public class InstitutionImp implements Institution {
         return this.name;
     }
 
-    private int findAidBox(AidBox aidBox) {
+    private AidBox findAidBox(AidBox aidBox) {
         for (int i = 0; i < nAidBox; i++) {
             if (this.aidBoxes[i].equals(aidBox)) {
-                return i;
+                return aidBoxes[i];
             }
         }
-        return -1;
+        return null;
     }
 
     private boolean hasDuplicateContainers(AidBox aidbox) {
@@ -90,7 +91,7 @@ public class InstitutionImp implements Institution {
             throw new AidBoxException();
         }
 
-        if (findAidBox(aidbox) != -1) {
+        if (findAidBox(aidbox) != null) {
             return false;
         }
 
@@ -106,44 +107,56 @@ public class InstitutionImp implements Institution {
         return true;
     }
 
-    private int findContainer(Container ct) {
+    private Container findContainer(Container ct) {
         for (int i = 0; i < nAidBox; i++) {
             Container container = this.aidBoxes[i].getContainer(ct.getType());
             if (container.equals(ct)) {
-                return i;
+                return container;
             }
         }
-        return -1;
+        return null;
     }
+    
+    /*
+    private Container findContainer(Container ct) {
+        for (int i = 0; i < containers.lenght; i++) {
+            if (containers[i].equals(ct)) {
+                return containers[i];
+            }
+        }
+        return null;
+    }
+    */
 
-    private int findMeasuremet(Measurement msrmnt, Container cntnr) {
+    private Measurement findMeasuremet(Measurement msrmnt, Container cntnr) {
         Measurement[] measurements = cntnr.getMeasurements();
 
         for (int i = 0; i < measurements.length; i++) {
             if (measurements[i].equals(msrmnt)) {
-                return i;
+                return measurements[i];
             }
         }
-        return -1;
+        return null;
     }
 
     @Override
     public boolean addMeasurement(Measurement msrmnt, Container cntnr) throws ContainerException, MeasurementException {
-        if (findContainer(cntnr) == -1) {
+        if (findContainer(cntnr) == null) {
             throw new ContainerException();
         }
 
-        if (findMeasuremet(msrmnt, cntnr) != -1) {
+        if (findMeasuremet(msrmnt, cntnr) != null) {
             return false;
         }
         if (msrmnt.getValue() > cntnr.getCapacity()) {
             throw new ContainerException();
         }
-        try {
+        //Ta dando erro, até resolver o findContainer
+        /*try {
             this.aidBoxes[findContainer(cntnr)].getContainer(cntnr.getType()).addMeasurement(msrmnt);
         } catch (MeasurementException exc) {
             throw new ContainerException();
-        }
+        }*/
 
         return true;
     }
@@ -176,13 +189,13 @@ public class InstitutionImp implements Institution {
         throw new ContainerException("Container with the given item type doesn't exist.");
     }
 
-    private int findVehicle(Vehicle vhcl) {
+    private Vehicle findVehicle(Vehicle vhcl) {
         for (int i = 0; i < this.nVehicle; i++) {
             if (this.vehicles[i].equals(vhcl)) {
-                return i;
+                return vehicles[i];
             }
         }
-        return -1;
+        return null;
     }
 
     private void expandVehicle() {
@@ -215,7 +228,7 @@ public class InstitutionImp implements Institution {
             return false;
         }
 
-        if (findVehicle(vhcl) != -1) {
+        if (findVehicle(vhcl) != null) {
             return false;
         }
 
@@ -225,7 +238,7 @@ public class InstitutionImp implements Institution {
 
     @Override
     public void disableVehicle(Vehicle vhcl) throws VehicleException {
-        if(findVehicle(vhcl) == -1) {
+        if(findVehicle(vhcl) == null) {
             throw new VehicleException();
         }
         
@@ -239,7 +252,7 @@ public class InstitutionImp implements Institution {
 
     @Override
     public void enableVehicle(Vehicle vhcl) throws VehicleException {
-        if (findVehicle(vhcl) == -1) {
+        if (findVehicle(vhcl) == null) {
             throw new VehicleException();
         }
 
