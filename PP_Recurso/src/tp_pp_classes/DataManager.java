@@ -4,6 +4,7 @@
  */
 package tp_pp_classes;
 
+import Exceptions.AidBoxInArrayException;
 import Exceptions.ContainerInArrayException;
 import com.estg.core.AidBox;
 import com.estg.core.Container;
@@ -42,7 +43,7 @@ public class DataManager {
         try {
             try {
                 ApiAidboxes();
-            } catch (ContainerInArrayException ex) {
+            } catch (AidBoxInArrayException ex) {
                 Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
             }
         } catch (IOException ex) {
@@ -156,7 +157,7 @@ public class DataManager {
         return null;
     }
 
-    public void ApiAidboxes() throws IOException, ParseException, ContainerException, ContainerInArrayException {
+    public void ApiAidboxes() throws IOException, ParseException, ContainerException, AidBoxInArrayException {
         String jsonResponse = httpProvider.getAidBoxes();
         JSONParser parser = new JSONParser();
         JSONArray AidBoxesArray = (JSONArray) parser.parse(jsonResponse);
@@ -207,14 +208,14 @@ public class DataManager {
         this.aidboxes = aidboxes;
     }
 
-    public boolean addAidBoxM(AidBox aid) throws ContainerInArrayException {
+    public boolean addAidBoxM(AidBox aid) throws AidBoxInArrayException {
         if (aid == null) {
             return false;
         }
 
         for (int i = 0; i < numberAidBoxes; i++) {
             if (aidboxes[i].equals(aid)) {
-                throw new ContainerInArrayException();
+                throw new AidBoxInArrayException();
             }
         }
         if (numberAidBoxes >= aidboxes.length) {
