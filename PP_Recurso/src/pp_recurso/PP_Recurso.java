@@ -7,6 +7,7 @@ package pp_recurso;
 import com.estg.core.AidBox;
 import com.estg.core.Container;
 import com.estg.core.ContainerType;
+import com.estg.core.Measurement;
 import com.estg.core.exceptions.ContainerException;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -14,6 +15,7 @@ import java.util.logging.Logger;
 import org.json.simple.parser.ParseException;
 import tp_pp_classes.ContainerImp;
 import tp_pp_classes.DataManager;
+import tp_pp_classes.LocationImp;
 
 /**
  *
@@ -24,8 +26,8 @@ public class PP_Recurso {
     public static void main(String[] args) throws ContainerException {
 
         DataManager dataManager = new DataManager();
-        Container[] aidboxes = dataManager.getContainers();
-        for (Container aidbox : aidboxes) {
+        Measurement[] aidboxes = dataManager.getMeasurement();
+        for (Measurement aidbox : aidboxes) {
             if (aidbox != null) {
                 System.out.println(aidbox.toString());
             }

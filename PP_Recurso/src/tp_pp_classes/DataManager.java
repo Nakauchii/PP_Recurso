@@ -16,6 +16,7 @@ import com.estg.core.exceptions.MeasurementException;
 import http.HttpProviderImp;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,6 +58,26 @@ public class DataManager {
         } catch (ParseException ex) {
             Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ContainerException ex) {
+            Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        try {
+            ApiLocation();
+        } catch (IOException ex) {
+            Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
+            Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (LocationInArrayException ex) {
+            Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        try {
+            ApiMeasurement();
+        } catch (IOException ex) {
+            Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
+            Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MeasurementException ex) {
             Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -253,11 +274,11 @@ public class DataManager {
             JSONArray toArray = (JSONArray) location.get("to");
 
             for (int j = 0; j < toArray.size(); j++) {
-                JSONObject toObject = (JSONObject) toArray.get(i);
+                JSONObject toObject = (JSONObject) toArray.get(j);
 
                 String name = (String) toObject.get("name");
-                double distance = (double) toObject.get("distance");
-                double duration = (double) toObject.get("duration");
+                double distance = ((Number) toObject.get("distance")).doubleValue();
+                double duration = ((Number) toObject.get("duration")).doubleValue();
 
                 addLocationM(new LocationImp(name, distance, duration));
             }
@@ -267,6 +288,12 @@ public class DataManager {
     public boolean addLocationM(LocationImp loc) throws LocationInArrayException {
         if (loc == null) {
             return false;
+        }
+
+        for (int i = 0; i < numberLocations; i++) {
+            if (locations[i].equals(loc)) {
+                throw new LocationInArrayException("Location already exists in the array.");
+            }
         }
 
         for (int i = 0; i < numberLocations; i++) {
@@ -299,20 +326,24 @@ public class DataManager {
     }
 
     public void ApiMeasurement() throws IOException, ParseException, MeasurementException {
-
         String jsonResponse = httpProvider.getReadings();
         JSONParser parser = new JSONParser();
         JSONArray measurementsArray = (JSONArray) parser.parse(jsonResponse);
 
         measurements = new Measurement[measurementsArray.size()];
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
         for (int i = 0; i < measurementsArray.size(); i++) {
             JSONObject measurement = (JSONObject) measurementsArray.get(i);
 
             String contentor = (String) measurement.get("contentor");
-            LocalDateTime data = (LocalDateTime) measurement.get("data");
+            String dateString = (String) measurement.get("data"); // Supondo que "data" é a chave para a data como String
             long valor = (long) measurement.get("valor");
-            
+
+            // Converte a String de data para LocalDateTime
+            LocalDateTime data = LocalDateTime.parse(dateString, formatter);
+
             addMeasurementM(new MeasurementImp(contentor, data, valor));
         }
     }
@@ -349,5 +380,4 @@ public class DataManager {
         }
         return result;
     }
-
 }

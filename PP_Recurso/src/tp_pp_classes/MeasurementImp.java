@@ -14,7 +14,7 @@ import java.util.Objects;
  * @author Roger Nakauchi
  */
 public class MeasurementImp implements Measurement {
-    
+
     private String containerCode;
     private LocalDateTime date;
     private double value;
@@ -36,20 +36,19 @@ public class MeasurementImp implements Measurement {
 
     @Override
     public LocalDateTime getDate() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return date;
     }
 
     @Override
     public double getValue() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return value;
     }
 
     @Override
     public String toString() {
-        return "Measurement{containerCode: " + containerCode + "date: " + date + ", value: " + value + "}"; 
+        return "Measurement{containerCode: " + containerCode + "date: " + date + ", value: " + value + "}";
     }
 
-    
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -67,10 +66,5 @@ public class MeasurementImp implements Measurement {
         }
         return Objects.equals(this.date, other.date);
     }
-    
-    
-    
-    
-    
-    
+
 }

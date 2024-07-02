@@ -4,6 +4,8 @@
  */
 package tp_pp_classes;
 
+import java.util.Objects;
+
 /**
  *
  * @author fabio
@@ -33,6 +35,12 @@ public class LocationImp {
     }
 
     @Override
+    public int hashCode() {
+        int hash = 3;
+        return hash;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -43,9 +51,17 @@ public class LocationImp {
         if (getClass() != obj.getClass()) {
             return false;
         }
-
-        return this.code.equals(((LocationImp) obj).code);
+        final LocationImp other = (LocationImp) obj;
+        if (Double.doubleToLongBits(this.distance) != Double.doubleToLongBits(other.distance)) {
+            return false;
+        }
+        if (Double.doubleToLongBits(this.duration) != Double.doubleToLongBits(other.duration)) {
+            return false;
+        }
+        return Objects.equals(this.code, other.code);
     }
+
+    
 
     @Override
     public String toString() {
