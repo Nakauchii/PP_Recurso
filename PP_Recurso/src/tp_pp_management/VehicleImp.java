@@ -14,15 +14,31 @@ import com.estg.pickingManagement.Vehicle;
 public class VehicleImp implements Vehicle {
     
     private String code;
-
-    @Override
-    public String getCode() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    private ContainerType[] containerTypes;
+    private double[] capacities;
+    private int numberContainerTypes;
+    
+    public VehicleImp(String code, int numberContainerTypes) {
+        this.code = code;
+        this.containerTypes = new ContainerType[numberContainerTypes];
+        this.capacities = new double[numberContainerTypes];
     }
 
     @Override
+    public String getCode() {
+        return this.code;
+    }
+
+    
+    //Verificar se é isso mesmo, pq não entendi o javadoc
+    @Override
     public double getCapacity(ContainerType ct) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        for(int i = 0; i < numberContainerTypes; i++) {
+            if(containerTypes[i] != null && containerTypes[i].equals(ct)) {
+                return capacities[i];
+            }
+        }
+        return 0;
     }
     
 }
