@@ -107,7 +107,7 @@ public class VehicleImp implements Vehicle {
 
     private String capacityToString() {
         int nCont = 0;
-        String s = "\n";
+        String s = " ";
 
         for (Capacity cpct : this.capacity) {
             if (this.capacity[nCont] != null) {
@@ -120,6 +120,6 @@ public class VehicleImp implements Vehicle {
     @Override
     public String toString() {
         String s = capacityToString();
-        return "VehicleImp{" + ", code=" + code + s + '}';
+        return "\n\nVehicleImp{" + ", code=" + code + s + '}';
     }
 }

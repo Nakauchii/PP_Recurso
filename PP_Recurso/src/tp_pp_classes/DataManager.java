@@ -63,7 +63,7 @@ public class DataManager {
         }
         try {
             ApiVehicles();
-        } catch (MeasurementException | IOException | ParseException | VehicleException ex) {
+        } catch (IOException | ParseException | VehicleException ex) {
             Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -321,14 +321,12 @@ public class DataManager {
         this.vehicles = tmpCap;
     }
 
-    public void ApiVehicles() throws IOException, ParseException, VehicleException, MeasurementException {
-        ContainerType[] containerTypes = getTypes();
-
+    public void ApiVehicles() throws IOException, ParseException, VehicleException {
         String jsonResponse = httpProvider.getVehicles();
         JSONParser parser = new JSONParser();
         JSONArray vehiclesArray = (JSONArray) parser.parse(jsonResponse);
 
-        vehicles = new VehicleImp[vehiclesArray.size()];
+        this.vehicles = new VehicleImp[vehiclesArray.size()];
 
         for (int i = 0; i < vehiclesArray.size(); i++) {
             JSONObject vehicle = (JSONObject) vehiclesArray.get(i);
@@ -336,18 +334,30 @@ public class DataManager {
             String code = (String) vehicle.get("code");
             JSONObject capacityObject = (JSONObject) vehicle.get("capacity");
 
-            VehicleImp vehicleImp = new VehicleImp(code);
+            VehicleImp v = new VehicleImp(code);
 
-            for (ContainerType type : containerTypes) {
-                String typeName = type.toString().split("=")[1];
-                if (capacityObject.containsKey(typeName)) {
-                    Capacity capacity = new Capacity(type, ((Number) capacityObject.get(typeName)).intValue());
-                    vehicleImp.addCapacity(capacity);
+            for (Object key : capacityObject.keySet()) {
+                if(key != null){
+                    String type = (String) key;
+                    int capacity = ((Long) capacityObject.get(type)).intValue();
+                    ContainerType containerType = new ContainerTypeImp(type);
+                    Capacity cap = new Capacity(containerType, capacity);
+                    try {
+                        v.addCapacity(cap);
+                    } catch (VehicleException ex) {
+                        Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
-            addVehiclesM(vehicleImp);
+
+            try {
+                addVehiclesM(v);
+            } catch (MeasurementException ex) {
+                Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
+
 
     public boolean addVehiclesM(VehicleImp vhcl) throws MeasurementException {
         if (vhcl == null) {
