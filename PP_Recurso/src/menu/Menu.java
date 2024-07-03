@@ -37,7 +37,6 @@ import org.json.simple.parser.ParseException;
 import tp_pp_classes.DataManager;
 import tp_pp_classes.InstitutionImp;
 
-
 public class Menu {
 
     private Institution inst;
@@ -48,14 +47,12 @@ public class Menu {
     private BufferedReader reader;
     private static HttpProviderImp httpProvider = new HttpProviderImp();
 
-    
     public Menu(Institution inst) {
         this.inst = inst;
         this.reader = new BufferedReader(new InputStreamReader(System.in));
         this.arrays = new DataManager();
     }
 
-    
     public void start() {
         int option = 0;
 
@@ -63,7 +60,8 @@ public class Menu {
             System.out.println("=== Welcome To Felgueiras Institution ===");
             System.out.println("1. Institution");
             System.out.println("2. Routes");
-            System.out.println("3. Exit");
+            System.out.println("3. Report");
+            System.out.println("4. Exit");
             System.out.println("Option: ");
             try {
                 option = Integer.parseInt(reader.readLine());
@@ -77,6 +75,8 @@ public class Menu {
                         break;
                     case 3:
                         break;
+                    case 4:
+                        break;
                     default:
                         System.out.println("Invalid option!");
                         start();
@@ -87,18 +87,17 @@ public class Menu {
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a number.");
             }
-        } while (option != 3);
+        } while (option != 4);
     }
 
-    
     public void showInstitutionMenu() {
         boolean exit = false;
         while (!exit) {
             System.out.println("=== Institution Menu ===");
-            System.out.println("1. List Aidbox");
-            System.out.println("2. Add Aidbox");
-            System.out.println("3. Distances between Aidboxes");
-            System.out.println("4. Duration between Aidboxes");
+            System.out.println("1. AidBox");
+            System.out.println("2. Vehicles");
+            System.out.println("3. PickingMaps");
+            System.out.println("4. Measurements");
             System.out.println("5. Back");
             System.out.println("Select option: ");
 
@@ -106,14 +105,9 @@ public class Menu {
                 int option = Integer.parseInt(reader.readLine());
 
                 switch (option) {
-                    case 1: {
-                        try {
-                            listAidBox();
-                        } catch (AidBoxException ex) {
-                            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                    case 1:
+                        showAidBoxMenu();
                         break;
-                    }
                     case 2: {
                         try {
                             addAidBox();
@@ -135,13 +129,7 @@ public class Menu {
                     break;
 
                     case 4:
-                    {
-                        try {
-                            viewDuration();
-                        } catch (AidBoxException ex) {
-                            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
+                        showMeasurementsMenu();
                         break;
 
                     case 5:
@@ -248,6 +236,157 @@ public class Menu {
         if (!found) {
             throw new AidBoxException("Aid Box with code '\" + code + \"' not found.");
         }
+    }
+
+    public void showAidBoxMenu() {
+        boolean exit = false;
+        while (!exit) {
+            System.out.println("=== Aidbox Menu ===");
+            System.out.println("1. List Aidbox");
+            System.out.println("2. Add Aidbox");
+            System.out.println("3. Distances between Aidboxes");
+            System.out.println("4. Duration between Aidboxes");
+            System.out.println("5. Back");
+            System.out.println("Select option: ");
+
+            try {
+                int option = Integer.parseInt(reader.readLine());
+
+                switch (option) {
+                    case 1: {
+                        try {
+                            listAidBox();
+                        } catch (AidBoxException ex) {
+                            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        break;
+                    }
+                    case 2: {
+                        try {
+                            addAidBox();
+                        } catch (ContainerException ex) {
+                            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (AidBoxException ex) {
+                            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    break;
+
+                    case 3: {
+                        try {
+                            viewDistances();
+                        } catch (AidBoxException ex) {
+                            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    break;
+
+                    case 4: {
+                        try {
+                            viewDuration();
+                        } catch (AidBoxException ex) {
+                            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    break;
+
+                    case 5:
+                        exit = true;
+                        break;
+                    default:
+                        System.out.println("Invalid selection. Try again!\n");
+                        break;
+                }
+
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.\n\n");
+            } catch (IOException e) {
+                System.out.println("Error reading input.");
+            }
+        }
+    }
+
+    public void showMeasurementsMenu() {
+        boolean exit = false;
+        while (!exit) {
+            System.out.println("=== Measurements Menu ===");
+            System.out.println("1. List Measurements");
+            System.out.println("2. Add Measurements");
+            System.out.println("3. Back");
+            System.out.println("Select option: ");
+
+            try {
+                int option = Integer.parseInt(reader.readLine());
+
+                switch (option) {
+                    case 1: {
+                        try {
+                            listMeasurements();
+                        } catch (MeasurementException ex) {
+                            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    break;
+
+                    case 2:
+                        break;
+                    case 3:
+                        exit = true;
+                        break;
+                    default:
+                        System.out.println("Invalid selection. Try again!\n");
+                        break;
+                }
+
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.\n\n");
+            } catch (IOException e) {
+                System.out.println("Error reading input.");
+            }
+        }
+    }
+
+    private Measurement[] listMeasurements() throws MeasurementException {
+
+        Measurement[] measurements = arrays.getMeasurement();
+
+        if (measurements == null) {
+            throw new MeasurementException();
+        } else {
+            System.out.println("Measurement List: ");
+            for (Measurement msmnt : measurements) {
+                if (msmnt != null) {
+                    System.out.println(msmnt);
+                }
+            }
+            return measurements;
+        }
+
+    }
+
+    private void addMeasurements() throws IOException {
+
+        System.out.println("Enter the Container code: ");
+        String containerCode = reader.readLine();
+
+        AidBox[] aidboxes = inst.getAidBoxes();
+
+        int i = 0;
+        boolean found = false;
+        Container container = null;
+
+        while (i < aidboxes.length && !found) {
+            Container[] containers = aidboxes[i].getContainers();
+            for (int j = 0; j < containers.length && !found; j++) {
+                if (containers[j].getCode().equals(containerCode)) {
+                    container = containers[j];
+                    found = true;
+                }
+            }
+            i++;
+        }
+        
+        
     }
 
     public static void main(String[] args) {

@@ -47,33 +47,45 @@ public class DataManager {
 
     public DataManager() {
         try {
-            ApiContainers();
-        } catch (IOException ex) {
-            Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParseException ex) {
-            Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
             try {
-                ApiAidboxes();
-            } catch (AidBoxInArrayException ex) {
+                ApiContainers();
+            } catch (IOException ex) {
+                Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ParseException ex) {
+                Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            try {
+                try {
+                    ApiAidboxes();
+                } catch (AidBoxInArrayException ex) {
+                    Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ParseException ex) {
+                Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ContainerException ex) {
+                Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            try {
+                ApiMeasurement();
+            } catch (IOException ex) {
+                Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ParseException ex) {
+                Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (MeasurementException ex) {
+                Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            try {
+                ApiVehicles();
+            } catch (MeasurementException ex) {
                 Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
             }
         } catch (IOException ex) {
             Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
             Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ContainerException ex) {
-            Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        try {
-            ApiMeasurement();
-        } catch (IOException ex) {
-            Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParseException ex) {
-            Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (MeasurementException ex) {
+        } catch (VehicleException ex) {
             Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -199,19 +211,6 @@ public class DataManager {
         }
     }
 
-    private AidBox findAidBox(String code) {
-        if (code == null || aidboxes == null) {
-            return null;
-        }
-
-        for (int i = 0; i < aidboxes.length; i++) {
-            if (aidboxes[i] != null && aidboxes[i].getCode().equals(code)) {
-                return aidboxes[i];
-            }
-        }
-        return null;
-    }
-
     public boolean addAidBoxM(AidBox aid) throws AidBoxInArrayException {
         if (aid == null) {
             return false;
@@ -327,17 +326,17 @@ public class DataManager {
         return true;
     }
 
- 
-
     public Measurement[] getMeasurement() {
-        Measurement[] result = new MeasurementImp[numberMeasurements];
+        Measurement[] result = new Measurement[numberMeasurements];
         for (int i = 0; i < numberMeasurements; i++) {
             result[i] = measurements[i];
         }
         return result;
     }
 
-    public void ApiVehicles() throws IOException, ParseException, VehicleException {
+    public void ApiVehicles() throws IOException, ParseException, VehicleException, MeasurementException {
+        ContainerType[] containerTypes = getTypes();
+
         String jsonResponse = httpProvider.getVehicles();
         JSONParser parser = new JSONParser();
         JSONArray vehiclesArray = (JSONArray) parser.parse(jsonResponse);
@@ -348,35 +347,24 @@ public class DataManager {
             JSONObject vehicle = (JSONObject) vehiclesArray.get(i);
 
             String code = (String) vehicle.get("code");
-            JSONArray capacityArray = (JSONArray) vehicle.get("capacity");
+            JSONObject capacityObject = (JSONObject) vehicle.get("capacity");
 
-            for (int j = 0; j < capacityArray.size(); j++) {
-                JSONObject toObject = (JSONObject) capacityArray.get(j);
-                
-                ContainerTypeImp clothing = new ContainerTypeImp("clothing");
-                ContainerTypeImp medicine = new ContainerTypeImp("medicine");
-                ContainerTypeImp perishable = new ContainerTypeImp("perishable food");
-                ContainerTypeImp nonPerishable = new ContainerTypeImp("non perishable food");
+            VehicleImp vehicleImp = new VehicleImp(code);
 
-                // Crie instâncias de Capacity para cada ContainerType
-                Capacity clothingCapacity = new Capacity(clothing, ((Number) toObject.get("clothing")).intValue());
-                Capacity medicineCapacity = new Capacity(medicine, ((Number) toObject.get("medicine")).intValue());
-                Capacity perishableCapacity = new Capacity(perishable, ((Number) toObject.get("perishable food")).intValue());
-                Capacity nonPerishableCapacity = new Capacity(nonPerishable, ((Number) toObject.get("non perishable food")).intValue());
-
-                // Crie a instância de VehicleImp com os dados extraídos
-                VehicleImp vehicleImp = new VehicleImp(code);
-                vehicleImp.addCapacity(clothingCapacity);
-                vehicleImp.addCapacity(medicineCapacity);
-                vehicleImp.addCapacity(perishableCapacity);
-                vehicleImp.addCapacity(nonPerishableCapacity);
-                
-                vehicles[i] = vehicleImp;
+            for (ContainerType type : containerTypes) {
+                String typeName = type.toString().split("=")[1];
+                if (capacityObject.containsKey(typeName)) {
+                    Capacity capacity = new Capacity(type, ((Number) capacityObject.get(typeName)).intValue());
+                    vehicleImp.addCapacity(capacity);
+                }
             }
+            addVehiclesM(vehicleImp);
         }
     }
     
-    public boolean addVehichlesM(VehicleImp vhcl) throws MeasurementException {
+    
+
+    public boolean addVehiclesM(VehicleImp vhcl) throws MeasurementException {
         if (vhcl == null) {
             return false;
         }
@@ -389,8 +377,6 @@ public class DataManager {
         return true;
     }
 
- 
-
     public Vehicle[] getVehicles() {
         Vehicle[] result = new VehicleImp[numberVehicles];
         for (int i = 0; i < numberVehicles; i++) {
@@ -399,4 +385,3 @@ public class DataManager {
         return result;
     }
 }
-    
