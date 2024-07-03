@@ -42,7 +42,7 @@ public class ContainerTypeImp implements ContainerType {
 
     @Override
     public String toString() {
-        return  "type=" + type ;
+        return type ;
     }
     
     

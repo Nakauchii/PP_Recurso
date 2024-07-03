@@ -45,7 +45,7 @@ public class Capacity {
 
     @Override
     public String toString() {
-        return "Capacity{" + "type=" + type + ", capacity=" + capacity + '}';
+        return "{" + "type=" + type + ", capacity=" + capacity + '}';
     }
 }
 

@@ -47,45 +47,23 @@ public class DataManager {
 
     public DataManager() {
         try {
-            try {
-                ApiContainers();
-            } catch (IOException ex) {
-                Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ParseException ex) {
-                Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            try {
-                try {
-                    ApiAidboxes();
-                } catch (AidBoxInArrayException ex) {
-                    Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ParseException ex) {
-                Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ContainerException ex) {
-                Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            try {
-                ApiMeasurement();
-            } catch (IOException ex) {
-                Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ParseException ex) {
-                Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (MeasurementException ex) {
-                Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            try {
-                ApiVehicles();
-            } catch (MeasurementException ex) {
-                Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } catch (IOException ex) {
+            ApiContainers();
+        } catch (IOException | ParseException ex) {
             Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParseException ex) {
+        }
+        try {
+            ApiAidboxes();
+        } catch (AidBoxInArrayException | IOException | ParseException | ContainerException ex) {
             Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (VehicleException ex) {
+        }
+        try {
+            ApiMeasurement();
+        } catch (IOException | ParseException | MeasurementException ex) {
+            Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            ApiVehicles();
+        } catch (MeasurementException | IOException | ParseException | VehicleException ex) {
             Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -333,6 +311,15 @@ public class DataManager {
         }
         return result;
     }
+    
+    private void expand() {
+        Vehicle[] tmpCap = new VehicleImp[this.vehicles.length * EXPAND];
+
+        for (int i = 0; i < this.numberVehicles; i++) {
+            tmpCap[i] = this.vehicles[i];
+        }
+        this.vehicles = tmpCap;
+    }
 
     public void ApiVehicles() throws IOException, ParseException, VehicleException, MeasurementException {
         ContainerType[] containerTypes = getTypes();
@@ -361,8 +348,6 @@ public class DataManager {
             addVehiclesM(vehicleImp);
         }
     }
-    
-    
 
     public boolean addVehiclesM(VehicleImp vhcl) throws MeasurementException {
         if (vhcl == null) {
@@ -373,6 +358,11 @@ public class DataManager {
                 throw new MeasurementException();
             }
         }
+        
+        if(numberVehicles > vehicles.length){
+            expand();
+        }
+        
         this.vehicles[numberVehicles++] = vhcl;
         return true;
     }
