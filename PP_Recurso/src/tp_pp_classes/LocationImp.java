@@ -22,15 +22,15 @@ public class LocationImp {
         this.duration = duration;
     }
 
-    protected String getCode() {
+    public String getCode() {
         return code;
     }
 
-    protected double getDistance() {
+    public double getDistance() {
         return distance;
     }
 
-    protected double getDuration() {
+    public double getDuration() {
         return duration;
     }
 

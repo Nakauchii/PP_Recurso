@@ -23,9 +23,10 @@ import tp_pp_management.VehicleImp;
  *
  * @author fabio
  */
+
 public class InstitutionImp implements Institution {
 
-    private static final int MAX = 20;
+    private static final int MAX = 10;
     private static final int EXPAND = 2;
 
     private int nAidBox;
@@ -107,26 +108,15 @@ public class InstitutionImp implements Institution {
         return true;
     }
 
-    private Container findContainer(Container ct) {
+    private int findContainer(Container ct) {
         for (int i = 0; i < nAidBox; i++) {
             Container container = this.aidBoxes[i].getContainer(ct.getType());
             if (container.equals(ct)) {
-                return container;
+                return i;
             }
         }
-        return null;
+        return -1;
     }
-    
-    /*
-    private Container findContainer(Container ct) {
-        for (int i = 0; i < containers.lenght; i++) {
-            if (containers[i].equals(ct)) {
-                return containers[i];
-            }
-        }
-        return null;
-    }
-    */
 
     private Measurement findMeasuremet(Measurement msrmnt, Container cntnr) {
         Measurement[] measurements = cntnr.getMeasurements();
@@ -141,7 +131,7 @@ public class InstitutionImp implements Institution {
 
     @Override
     public boolean addMeasurement(Measurement msrmnt, Container cntnr) throws ContainerException, MeasurementException {
-        if (findContainer(cntnr) == null) {
+        if (findContainer(cntnr) == -1) {
             throw new ContainerException();
         }
 
@@ -151,12 +141,12 @@ public class InstitutionImp implements Institution {
         if (msrmnt.getValue() > cntnr.getCapacity()) {
             throw new ContainerException();
         }
-        //Ta dando erro, até resolver o findContainer
-        /*try {
+
+        try {
             this.aidBoxes[findContainer(cntnr)].getContainer(cntnr.getType()).addMeasurement(msrmnt);
         } catch (MeasurementException exc) {
             throw new ContainerException();
-        }*/
+        }
 
         return true;
     }
@@ -238,15 +228,15 @@ public class InstitutionImp implements Institution {
 
     @Override
     public void disableVehicle(Vehicle vhcl) throws VehicleException {
-        if(findVehicle(vhcl) == null) {
+        if (findVehicle(vhcl) == null) {
             throw new VehicleException();
         }
-        
+
         VehicleImp myVehicle = (VehicleImp) vhcl;
-        if(!myVehicle.isEnabled()){
+        if (!myVehicle.isEnabled()) {
             throw new VehicleException();
         }
-        
+
         myVehicle.setEnabled(false);
     }
 
@@ -264,24 +254,76 @@ public class InstitutionImp implements Institution {
         myVehicle.setEnabled(false);
     }
 
-    @Override
-    public PickingMap[] getPickingMaps() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    private int findPickingMap(PickingMap pm) {
+        for (int i = 0; i < nPickingMap; i++) {
+            if (this.pickingMaps[i].equals(pm)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
-    @Override
-    public PickingMap[] getPickingMaps(LocalDateTime ldt, LocalDateTime ldt1) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+    private void expandPickingMap() {
+        PickingMap[] PMap = new PickingMap[this.pickingMaps.length * EXPAND];
 
-    @Override
-    public PickingMap getCurrentPickingMap() throws PickingMapException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        for (int i = 0; i < this.nPickingMap; i++) {
+            PMap[i] = this.pickingMaps[i];
+        }
+        this.pickingMaps = PMap;
     }
 
     @Override
     public boolean addPickingMap(PickingMap pm) throws PickingMapException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (this.nPickingMap == this.pickingMaps.length) {
+            expandPickingMap();
+        }
+
+        if (pm == null) {
+            throw new PickingMapException("The Picking Map is null");
+        }
+
+        if (findPickingMap(pm) != -1) {
+            return false;
+        }
+
+        this.pickingMaps[this.nPickingMap++] = pm;
+        return true;
+    }
+
+    @Override
+    public PickingMap[] getPickingMaps() {
+        PickingMap[] Pm = new PickingMap[this.nPickingMap];
+        for (int i = 0; i < this.nPickingMap; i++) {
+            Pm[i] = this.pickingMaps[i];
+        }
+        return Pm;
+    }
+
+    @Override
+    public PickingMap[] getPickingMaps(LocalDateTime ldt, LocalDateTime ldt1) {
+        PickingMap[] copy = new PickingMap[nPickingMap];
+
+        for (int i = 0; i < nPickingMap; i++) {
+            LocalDateTime date = pickingMaps[i].getDate();
+            if (date.isAfter(ldt) && date.isBefore(ldt1)) {
+                copy[i] = pickingMaps[i];
+            }
+        }
+        return copy;
+    }
+
+    @Override
+    public PickingMap getCurrentPickingMap() throws PickingMapException {
+        if (nPickingMap == 0) {
+            throw new PickingMapException("There are no picking maps in the institution");
+        }
+        PickingMap currentPickingMap = pickingMaps[0];
+        for (int i = 1; i < nPickingMap; i++) {
+            if (pickingMaps[i].getDate().isAfter(currentPickingMap.getDate())) {
+                currentPickingMap = pickingMaps[i];
+            }
+        }
+        return currentPickingMap;
     }
 
     @Override

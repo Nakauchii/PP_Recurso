@@ -9,7 +9,9 @@ import com.estg.core.Container;
 import com.estg.core.ContainerType;
 import com.estg.core.exceptions.AidBoxException;
 import com.estg.core.exceptions.ContainerException;
+import java.lang.module.FindException;
 import java.util.Objects;
+import tp_pp_classes.LocationImp;
 
 /**
  *
@@ -46,30 +48,98 @@ public class AidBoxImp implements AidBox {
     public String getZone() {
         return this.zone;
     }
-    
-    public LocationImp getLocation(String code){
-        for(int i = 0; i < this.nLocations; i++){
-            if(this.locations[i].getCode().equals(code)){
+
+    public LocationImp getLocation(String code) {
+        for (int i = 0; i < this.nLocations; i++) {
+            if (this.locations[i].getCode().equals(code)) {
                 return locations[i];
             }
         }
         return null;
     }
 
+    private int findLocation(LocationImp loc) {
+        for (int i = 0; i < this.nLocations; i++) {
+            if (this.locations[i].equals(loc)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private void expandLocation() {
+        LocationImp[] location = new LocationImp[this.locations.length * EXPAND];
+
+        for (int i = 0; i < this.nLocations; i++) {
+            location[i] = this.locations[i];
+        }
+        this.locations = location;
+    }
+
+    public boolean addLocation(LocationImp loc) throws AidBoxException {
+        if (loc == null) {
+            return false;
+        }
+
+        if (findLocation(loc) != -1) {
+            return false;
+        }
+
+        if (nLocations >= locations.length) {
+            expandLocation();
+        }
+        
+        this.locations[nLocations++] = loc;
+        return true;
+    }
+    
+
     @Override
     public double getDistance(AidBox aidbox) throws AidBoxException {
-       throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (aidbox == null) {
+            throw new AidBoxException("Aid Box is Invalid");
+        }
+
+        LocationImp location = ((AidBoxImp) aidbox).getLocation(aidbox.getCode());
+        if (location == null) {
+            throw new AidBoxException("Aid Box not found");
+        }
+
+        return location.getDistance();
     }
+    
 
     @Override
     public double getDuration(AidBox aidbox) throws AidBoxException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (aidbox == null) {
+            throw new AidBoxException("Aid Box is Invalid");
+        }
+
+        LocationImp location = ((AidBoxImp) aidbox).getLocation(aidbox.getCode());
+        if (location == null) {
+            throw new AidBoxException("Aid Box not found");
+        }
+
+        return location.getDuration();
+    }
+
+    private int findContainer(Container cntnr) {
+        for (int i = 0; i < this.numberContainers; i++) {
+            if (this.containers[i].equals(cntnr)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
     public boolean addContainer(Container cntnr) throws ContainerException {
         if (cntnr == null) {
             throw new ContainerException("Container cannot be null");
+        }
+
+        if (findContainer(cntnr) != -1) {
+            return false;
         }
 
         for (int i = 0; i < numberContainers; i++) {
@@ -155,5 +225,5 @@ public class AidBoxImp implements AidBox {
         final AidBoxImp other = (AidBoxImp) obj;
         return Objects.equals(this.code, other.code);
     }
-    
+
 }
