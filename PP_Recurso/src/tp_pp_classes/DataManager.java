@@ -14,6 +14,8 @@ import com.estg.core.Measurement;
 import com.estg.core.exceptions.AidBoxException;
 import com.estg.core.exceptions.ContainerException;
 import com.estg.core.exceptions.MeasurementException;
+import com.estg.core.exceptions.VehicleException;
+import com.estg.pickingManagement.Vehicle;
 import http.HttpProviderImp;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -25,6 +27,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import tp_pp_management.Capacity;
+import tp_pp_management.VehicleImp;
 
 /**
  *
@@ -36,7 +40,8 @@ public class DataManager {
     private AidBox[] aidboxes;
     private LocationImp[] locations;
     private Measurement[] measurements;
-    private int numberContainers, numberAidBoxes, numberLocations, numberMeasurements;
+    private Vehicle[] vehicles;
+    private int numberContainers, numberAidBoxes, numberLocations, numberMeasurements, numberVehicles;
     private final int EXPAND = 2;
     private HttpProviderImp httpProvider = new HttpProviderImp();
 
@@ -120,7 +125,6 @@ public class DataManager {
         return result;
     }
 
-
     public boolean addContainerM(Container cntnr) throws ContainerInArrayException {
         if (cntnr == null) {
             return false;
@@ -131,7 +135,7 @@ public class DataManager {
                 throw new ContainerInArrayException();
             }
         }
-        
+
         this.containers[numberContainers++] = cntnr;
         return true;
     }
@@ -275,11 +279,10 @@ public class DataManager {
                 throw new LocationInArrayException();
             }
         }
-        
+
         this.locations[numberLocations++] = loc;
         return true;
     }
-
 
     public LocationImp[] getLocations() {
         LocationImp[] result = new LocationImp[numberLocations];
@@ -302,7 +305,7 @@ public class DataManager {
             JSONObject measurement = (JSONObject) measurementsArray.get(i);
 
             String contentor = (String) measurement.get("contentor");
-            String dateString = (String) measurement.get("data"); 
+            String dateString = (String) measurement.get("data");
             long valor = (long) measurement.get("valor");
 
             LocalDateTime data = LocalDateTime.parse(dateString, formatter);
@@ -320,27 +323,80 @@ public class DataManager {
                 throw new MeasurementException();
             }
         }
-        if (numberMeasurements >= measurements.length) {
-            expandMeasurementM();
-        }
         this.measurements[numberMeasurements++] = msrnt;
         return true;
     }
 
-    private void expandMeasurementM() {
-        Measurement[] newMeasurements = new Measurement[this.measurements.length * EXPAND];
-
-        for (int i = 0; i < this.numberMeasurements; i++) {
-            newMeasurements[i] = this.measurements[i];
-        }
-        this.measurements = newMeasurements;
-    }
+ 
 
     public Measurement[] getMeasurement() {
-        Measurement[] result = new Measurement[numberMeasurements];
+        Measurement[] result = new MeasurementImp[numberMeasurements];
         for (int i = 0; i < numberMeasurements; i++) {
             result[i] = measurements[i];
         }
         return result;
     }
+
+    public void ApiVehicles() throws IOException, ParseException, VehicleException {
+        String jsonResponse = httpProvider.getVehicles();
+        JSONParser parser = new JSONParser();
+        JSONArray vehiclesArray = (JSONArray) parser.parse(jsonResponse);
+
+        vehicles = new VehicleImp[vehiclesArray.size()];
+
+        for (int i = 0; i < vehiclesArray.size(); i++) {
+            JSONObject vehicle = (JSONObject) vehiclesArray.get(i);
+
+            String code = (String) vehicle.get("code");
+            JSONArray capacityArray = (JSONArray) vehicle.get("capacity");
+
+            for (int j = 0; j < capacityArray.size(); j++) {
+                JSONObject toObject = (JSONObject) capacityArray.get(j);
+                
+                ContainerTypeImp clothing = new ContainerTypeImp("clothing");
+                ContainerTypeImp medicine = new ContainerTypeImp("medicine");
+                ContainerTypeImp perishable = new ContainerTypeImp("perishable food");
+                ContainerTypeImp nonPerishable = new ContainerTypeImp("non perishable food");
+
+                // Crie instâncias de Capacity para cada ContainerType
+                Capacity clothingCapacity = new Capacity(clothing, ((Number) toObject.get("clothing")).intValue());
+                Capacity medicineCapacity = new Capacity(medicine, ((Number) toObject.get("medicine")).intValue());
+                Capacity perishableCapacity = new Capacity(perishable, ((Number) toObject.get("perishable food")).intValue());
+                Capacity nonPerishableCapacity = new Capacity(nonPerishable, ((Number) toObject.get("non perishable food")).intValue());
+
+                // Crie a instância de VehicleImp com os dados extraídos
+                VehicleImp vehicleImp = new VehicleImp(code);
+                vehicleImp.addCapacity(clothingCapacity);
+                vehicleImp.addCapacity(medicineCapacity);
+                vehicleImp.addCapacity(perishableCapacity);
+                vehicleImp.addCapacity(nonPerishableCapacity);
+                
+                vehicles[i] = vehicleImp;
+            }
+        }
+    }
+    
+    public boolean addVehichlesM(VehicleImp vhcl) throws MeasurementException {
+        if (vhcl == null) {
+            return false;
+        }
+        for (int i = 0; i < numberVehicles; i++) {
+            if (vehicles[i].equals(vhcl)) {
+                throw new MeasurementException();
+            }
+        }
+        this.vehicles[numberVehicles++] = vhcl;
+        return true;
+    }
+
+ 
+
+    public Vehicle[] getVehicles() {
+        Vehicle[] result = new VehicleImp[numberVehicles];
+        for (int i = 0; i < numberVehicles; i++) {
+            result[i] = vehicles[i];
+        }
+        return result;
+    }
 }
+    

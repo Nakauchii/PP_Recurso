@@ -9,6 +9,7 @@ import com.estg.core.Container;
 import com.estg.core.ContainerType;
 import com.estg.core.exceptions.AidBoxException;
 import com.estg.core.exceptions.ContainerException;
+import com.estg.pickingManagement.Vehicle;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,13 +28,12 @@ public class PP_Recurso {
     public static void main(String[] args) throws ContainerException, AidBoxException {
 
         DataManager dataManager = new DataManager();
-        AidBox[] aidboxes = dataManager.getAidBox();
-        for (AidBox aidbox : aidboxes) {
+        Vehicle[] aidboxes = dataManager.getVehicles();
+        for (Vehicle aidbox : aidboxes) {
             if (aidbox != null) {
                 System.out.println(aidbox);
             }
         }
 
-        System.out.println(((AidBoxImp)aidboxes[0]).getDistance(aidboxes[1]));
     }
 }

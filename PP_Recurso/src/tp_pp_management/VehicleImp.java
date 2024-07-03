@@ -120,6 +120,6 @@ public class VehicleImp implements Vehicle {
     @Override
     public String toString() {
         String s = capacityToString();
-        return "VehicleInc{" + "nCapacity=" + nCapacity + ", code=" + code + ", enable=" + isEnabled + s + '}';
+        return "VehicleImp{" + "nCapacity=" + nCapacity + ", code=" + code + ", enable=" + isEnabled + s + '}';
     }
 }
