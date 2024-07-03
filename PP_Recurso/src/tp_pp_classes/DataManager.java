@@ -120,14 +120,6 @@ public class DataManager {
         return result;
     }
 
-    private void expandContainerM() {
-        Container[] container = new ContainerImp[this.containers.length * EXPAND];
-
-        for (int i = 0; i < this.numberContainers; i++) {
-            containers[i] = this.containers[i];
-        }
-        this.containers = containers;
-    }
 
     public boolean addContainerM(Container cntnr) throws ContainerInArrayException {
         if (cntnr == null) {
@@ -139,9 +131,7 @@ public class DataManager {
                 throw new ContainerInArrayException();
             }
         }
-        if (numberContainers >= containers.length) {
-            expandContainerM();
-        }
+        
         this.containers[numberContainers++] = cntnr;
         return true;
     }
@@ -218,15 +208,6 @@ public class DataManager {
         return null;
     }
 
-    private void expandAidBoxM() {
-        AidBox[] aidBox = new AidBoxImp[this.aidboxes.length * EXPAND];
-
-        for (int i = 0; i < this.numberAidBoxes; i++) {
-            aidboxes[i] = this.aidboxes[i];
-        }
-        this.aidboxes = aidboxes;
-    }
-
     public boolean addAidBoxM(AidBox aid) throws AidBoxInArrayException {
         if (aid == null) {
             return false;
@@ -236,9 +217,6 @@ public class DataManager {
             if (aidboxes[i].equals(aid)) {
                 throw new AidBoxInArrayException();
             }
-        }
-        if (numberAidBoxes >= aidboxes.length) {
-            expandAidBoxM();
         }
         this.aidboxes[numberAidBoxes++] = aid;
         return true;
@@ -297,21 +275,11 @@ public class DataManager {
                 throw new LocationInArrayException();
             }
         }
-        if (numberLocations >= locations.length) {
-            expandLocationM();
-        }
+        
         this.locations[numberLocations++] = loc;
         return true;
     }
 
-    private void expandLocationM() {
-        LocationImp[] location = new LocationImp[this.locations.length * EXPAND];
-
-        for (int i = 0; i < this.numberLocations; i++) {
-            location[i] = this.locations[i];
-        }
-        this.locations = location;
-    }
 
     public LocationImp[] getLocations() {
         LocationImp[] result = new LocationImp[numberLocations];
@@ -334,10 +302,9 @@ public class DataManager {
             JSONObject measurement = (JSONObject) measurementsArray.get(i);
 
             String contentor = (String) measurement.get("contentor");
-            String dateString = (String) measurement.get("data"); // Supondo que "data" é a chave para a data como String
+            String dateString = (String) measurement.get("data"); 
             long valor = (long) measurement.get("valor");
 
-            // Converte a String de data para LocalDateTime
             LocalDateTime data = LocalDateTime.parse(dateString, formatter);
 
             addMeasurementM(new MeasurementImp(contentor, data, valor));

@@ -37,12 +37,7 @@ import org.json.simple.parser.ParseException;
 import tp_pp_classes.DataManager;
 import tp_pp_classes.InstitutionImp;
 
-/**
- * The Menu class provides a user interface for managing an institution's aid
- * boxes, containers, measurements, and vehicles. It allows users to add, list,
- * and view details about these entities. The class also handles importing and
- * exporting data for the institution.
- */
+
 public class Menu {
 
     private Institution inst;
@@ -53,21 +48,14 @@ public class Menu {
     private BufferedReader reader;
     private static HttpProviderImp httpProvider = new HttpProviderImp();
 
-    /**
-     * Constructor for the Menu class.
-     *
-     * @param inst the institution to be managed.
-     */
+    
     public Menu(Institution inst) {
         this.inst = inst;
         this.reader = new BufferedReader(new InputStreamReader(System.in));
         this.arrays = new DataManager();
     }
 
-    /**
-     * Starts the main menu interface and handles user input for different
-     * options.
-     */
+    
     public void start() {
         int option = 0;
 
@@ -102,10 +90,7 @@ public class Menu {
         } while (option != 3);
     }
 
-    /**
-     * Displays the aid box management menu and handles user input for different
-     * options.
-     */
+    
     public void showInstitutionMenu() {
         boolean exit = false;
         while (!exit) {
@@ -175,12 +160,6 @@ public class Menu {
         }
     }
 
-    /**
-     * Lists all aid boxes and prints their details to the console.
-     *
-     * @return an array of AidBox objects.
-     * @throws AidBoxException if there is an error listing aid boxes.
-     */
     private AidBox[] listAidBox() throws AidBoxException {
 
         AidBox[] aidboxes = inst.getAidBoxes();
@@ -271,11 +250,6 @@ public class Menu {
         }
     }
 
-    /**
-     * Main method to run the menu application.
-     *
-     * @param args command line arguments
-     */
     public static void main(String[] args) {
         InstitutionImp inst = new InstitutionImp("ONG");
 
