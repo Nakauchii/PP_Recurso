@@ -58,13 +58,13 @@ public class AidBoxImp implements AidBox {
         return null;
     }
 
-    private int findLocation(LocationImp loc) {
+    private LocationImp findLocation(LocationImp loc) {
         for (int i = 0; i < this.nLocations; i++) {
             if (this.locations[i].equals(loc)) {
-                return i;
+                return locations[i];
             }
         }
-        return -1;
+        return null;
     }
 
     private void expandLocation() {
@@ -81,7 +81,7 @@ public class AidBoxImp implements AidBox {
             return false;
         }
 
-        if (findLocation(loc) != -1) {
+        if (findLocation(loc) != null) {
             return false;
         }
 
@@ -122,13 +122,13 @@ public class AidBoxImp implements AidBox {
         return location.getDuration();
     }
 
-    private int findContainer(Container cntnr) {
+    private Container findContainer(Container cntnr) {
         for (int i = 0; i < this.numberContainers; i++) {
             if (this.containers[i].equals(cntnr)) {
-                return i;
+                return containers[i];
             }
         }
-        return -1;
+        return null;
     }
 
     @Override
@@ -137,7 +137,7 @@ public class AidBoxImp implements AidBox {
             throw new ContainerException("Container cannot be null");
         }
 
-        if (findContainer(cntnr) != -1) {
+        if (findContainer(cntnr) != null) {
             return false;
         }
 

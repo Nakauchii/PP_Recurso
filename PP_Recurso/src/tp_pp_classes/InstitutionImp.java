@@ -15,9 +15,10 @@ import com.estg.core.exceptions.MeasurementException;
 import com.estg.core.exceptions.PickingMapException;
 import com.estg.core.exceptions.VehicleException;
 import com.estg.pickingManagement.PickingMap;
+import com.estg.pickingManagement.Report;
 import com.estg.pickingManagement.Vehicle;
 import java.time.LocalDateTime;
-import tp_pp_management.Report;
+import tp_pp_management.ReportImp;
 import tp_pp_management.VehicleImp;
 
 /**
@@ -38,7 +39,7 @@ public class InstitutionImp implements Institution {
     private Vehicle[] vehicles;
     private String name;
     private PickingMap[] pickingMaps;
-    private Report[] reports;
+    private ReportImp[] reports;
 
     public InstitutionImp(String name) {
         this.name = name;
@@ -48,7 +49,7 @@ public class InstitutionImp implements Institution {
         this.aidBoxes = new AidBoxImp[MAX];
         this.vehicles = new VehicleImp[MAX];
         this.pickingMaps = new PickingMap[MAX];
-        this.reports = new Report[MAX];
+        this.reports = new ReportImp[MAX];
     }
 
     @Override
@@ -256,13 +257,13 @@ public class InstitutionImp implements Institution {
         myVehicle.setEnable(false);
     }
 
-    private int findPickingMap(PickingMap pm) {
+    private PickingMap findPickingMap(PickingMap pm) {
         for (int i = 0; i < nPickingMap; i++) {
             if (this.pickingMaps[i].equals(pm)) {
-                return i;
+                return pickingMaps[i];
             }
         }
-        return -1;
+        return null;
     }
 
     private void expandPickingMap() {
@@ -284,7 +285,7 @@ public class InstitutionImp implements Institution {
             throw new PickingMapException("The Picking Map is null");
         }
 
-        if (findPickingMap(pm) != -1) {
+        if (findPickingMap(pm) != null) {
             return false;
         }
 
@@ -353,5 +354,35 @@ public class InstitutionImp implements Institution {
         InstitutionImp inst = (InstitutionImp) obj;
         return this.name == inst.name;
     }
+    
+    
+    public void expandReports() {
+        ReportImp[] newReports = new ReportImp[this.reports.length * 2];
+        for(int i = 0; i < this.nReport; i++) {
+            newReports[i] = reports[i];
+        }
+        this.reports = newReports;
+    }
+    
+    public boolean addReport(Report report) {
+        if(report == null) {
+            return false;
+        }
+        if(this.nReport == this.reports.length) {
+            expandReports();
+        }
+        
+        this.reports[this.nReport++] = (ReportImp) report;
+        return true;
+    }
+    
+    public Report[] getReports() {
+        ReportImp[] reports = new ReportImp[this.nReport];
+        for(int i = 0; i < this.nReport; i++) {
+            reports[i] = this.reports[i];
+        }
+        return reports;
+    }
+    
 
 }

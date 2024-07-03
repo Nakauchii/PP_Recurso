@@ -28,6 +28,8 @@ public class ContainerImp implements Container {
     private Measurement[] measurements;
 
     private int numberMeasurements;
+    
+    private boolean picked;
 
     public ContainerImp(String id, String code, int capacity, ContainerType type) {
         this.id = id;
@@ -53,6 +55,14 @@ public class ContainerImp implements Container {
 
     public String getId() {
         return this.id;
+    }
+    
+    public boolean isPicked() {
+        return picked;
+    }
+    
+    public void setPicked(boolean picked) {
+        this.picked = picked;
     }
 
     @Override
