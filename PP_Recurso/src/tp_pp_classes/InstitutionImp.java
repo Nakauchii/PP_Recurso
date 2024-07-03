@@ -235,11 +235,11 @@ public class InstitutionImp implements Institution {
         }
 
         VehicleImp myVehicle = (VehicleImp) vhcl;
-        if (!myVehicle.isEnabled()) {
+        if (!myVehicle.isEnable()) {
             throw new VehicleException();
         }
 
-        myVehicle.setEnabled(false);
+        myVehicle.setEnable(false);
     }
 
     @Override
@@ -249,11 +249,11 @@ public class InstitutionImp implements Institution {
         }
 
         VehicleImp myVehicle = (VehicleImp) vhcl;
-        if (!myVehicle.isEnabled()) {
+        if (!myVehicle.isEnable()) {
             throw new VehicleException();
         }
 
-        myVehicle.setEnabled(false);
+        myVehicle.setEnable(false);
     }
 
     private int findPickingMap(PickingMap pm) {
