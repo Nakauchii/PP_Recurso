@@ -326,7 +326,7 @@ public class DataManager {
         JSONParser parser = new JSONParser();
         JSONArray measurementsArray = (JSONArray) parser.parse(jsonResponse);
 
-        measurements = new Measurement[measurementsArray.size()];
+        measurements = new MeasurementImp[measurementsArray.size()];
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 

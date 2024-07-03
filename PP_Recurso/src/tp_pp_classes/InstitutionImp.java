@@ -334,7 +334,7 @@ public class InstitutionImp implements Institution {
             throw new AidBoxException("Aid Box is Invalid");
         }
 
-        LocationImp location = ((AidBoxImp) aidbox).getLocation("base");
+        LocationImp location = ((AidBoxImp) aidbox).getLocation("Base");
         if (location == null) {
             throw new AidBoxException("Aid Box not found");
         }

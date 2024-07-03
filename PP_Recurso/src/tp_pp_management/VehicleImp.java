@@ -5,6 +5,7 @@
 package tp_pp_management;
 
 import com.estg.core.ContainerType;
+import com.estg.core.exceptions.AidBoxException;
 import com.estg.pickingManagement.Vehicle;
 
 /**
@@ -17,6 +18,7 @@ public class VehicleImp implements Vehicle {
     //private VehicleCapacitiesImp capacities;
     private int numberContainerTypes;
     private boolean isEnable;
+    private double code1;
     
     public VehicleImp(String code, int numberContainerTypes) {
         this.code = code;
@@ -39,7 +41,7 @@ public class VehicleImp implements Vehicle {
 
     @Override
     public double getCapacity(ContainerType ct) {
-        //return capacities.getCapacity(ct);
+        return this.code1;
     }
     
     public void addContainerCapacity(ContainerType containerType, double capacity) {
