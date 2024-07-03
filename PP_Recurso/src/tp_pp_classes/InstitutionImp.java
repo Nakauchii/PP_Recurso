@@ -17,13 +17,13 @@ import com.estg.core.exceptions.VehicleException;
 import com.estg.pickingManagement.PickingMap;
 import com.estg.pickingManagement.Vehicle;
 import java.time.LocalDateTime;
+import tp_pp_management.Report;
 import tp_pp_management.VehicleImp;
 
 /**
  *
  * @author fabio
  */
-
 public class InstitutionImp implements Institution {
 
     private static final int MAX = 10;
@@ -38,7 +38,7 @@ public class InstitutionImp implements Institution {
     private Vehicle[] vehicles;
     private String name;
     private PickingMap[] pickingMaps;
-    //private Report[] reports;
+    private Report[] reports;
 
     public InstitutionImp(String name) {
         this.name = name;
@@ -108,14 +108,14 @@ public class InstitutionImp implements Institution {
         return true;
     }
 
-    private int findContainer(Container ct) {
+    private boolean hasContainer(Container ct) {
         for (int i = 0; i < nAidBox; i++) {
             Container container = this.aidBoxes[i].getContainer(ct.getType());
             if (container.equals(ct)) {
-                return i;
+                return true;
             }
         }
-        return -1;
+        return false;
     }
 
     private Measurement findMeasuremet(Measurement msrmnt, Container cntnr) {
@@ -131,19 +131,21 @@ public class InstitutionImp implements Institution {
 
     @Override
     public boolean addMeasurement(Measurement msrmnt, Container cntnr) throws ContainerException, MeasurementException {
-        if (findContainer(cntnr) == -1) {
+        if (hasContainer(cntnr) == false) {
             throw new ContainerException();
         }
 
         if (findMeasuremet(msrmnt, cntnr) != null) {
             return false;
         }
+        
+        //if(msrmnt.getCode != cntnr.getCode())
         if (msrmnt.getValue() > cntnr.getCapacity()) {
             throw new ContainerException();
         }
 
         try {
-            this.aidBoxes[findContainer(cntnr)].getContainer(cntnr.getType()).addMeasurement(msrmnt);
+            cntnr.addMeasurement(msrmnt);
         } catch (MeasurementException exc) {
             throw new ContainerException();
         }
@@ -338,6 +340,18 @@ public class InstitutionImp implements Institution {
         }
 
         return location.getDistance();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || !(obj instanceof InstitutionImp)) {
+            return false;
+        }
+        InstitutionImp inst = (InstitutionImp) obj;
+        return this.name == inst.name;
     }
 
 }

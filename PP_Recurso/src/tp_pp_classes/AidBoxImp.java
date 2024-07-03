@@ -99,7 +99,7 @@ public class AidBoxImp implements AidBox {
             throw new AidBoxException("Aid Box is Invalid");
         }
 
-        LocationImp location = ((AidBoxImp) aidbox).getLocation(aidbox.getCode());
+        LocationImp location = getLocation(aidbox.getCode());
         if (location == null) {
             throw new AidBoxException("Aid Box not found");
         }
@@ -112,8 +112,9 @@ public class AidBoxImp implements AidBox {
         if (aidbox == null) {
             throw new AidBoxException("Aid Box is Invalid");
         }
-
-        LocationImp location = ((AidBoxImp) aidbox).getLocation(aidbox.getCode());
+        
+        String aidBoxCode = aidbox.getCode();
+        LocationImp location = getLocation(aidBoxCode);
         if (location == null) {
             throw new AidBoxException("Aid Box not found");
         }
