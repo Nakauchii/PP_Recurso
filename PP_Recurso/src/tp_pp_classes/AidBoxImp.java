@@ -88,11 +88,10 @@ public class AidBoxImp implements AidBox {
         if (nLocations >= locations.length) {
             expandLocation();
         }
-        
+
         this.locations[nLocations++] = loc;
         return true;
     }
-    
 
     @Override
     public double getDistance(AidBox aidbox) throws AidBoxException {
@@ -107,7 +106,6 @@ public class AidBoxImp implements AidBox {
 
         return location.getDistance();
     }
-    
 
     @Override
     public double getDuration(AidBox aidbox) throws AidBoxException {
@@ -205,6 +203,14 @@ public class AidBoxImp implements AidBox {
         for (int i = 0; i < numberContainers; i++) {
             if (containers[i] != null) {
                 result += containers[i].toString() + "\n";
+            }
+        }
+
+        result += "Locations:\n";
+
+        for (int i = 0; i < nLocations; i++) {
+            if (locations[i] != null) {
+                result += locations[i].toString() + "\n";
             }
         }
 

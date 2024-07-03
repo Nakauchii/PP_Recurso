@@ -11,6 +11,7 @@ import com.estg.core.AidBox;
 import com.estg.core.Container;
 import com.estg.core.ContainerType;
 import com.estg.core.Measurement;
+import com.estg.core.exceptions.AidBoxException;
 import com.estg.core.exceptions.ContainerException;
 import com.estg.core.exceptions.MeasurementException;
 import http.HttpProviderImp;
@@ -58,16 +59,6 @@ public class DataManager {
         } catch (ParseException ex) {
             Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ContainerException ex) {
-            Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        try {
-            ApiLocation();
-        } catch (IOException ex) {
-            Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParseException ex) {
-            Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (LocationInArrayException ex) {
             Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -209,6 +200,7 @@ public class DataManager {
                     myAidBox.addContainer(container);
                 }
             }
+            ApiLocation(myAidBox);
             addAidBoxM(myAidBox);
         }
     }
@@ -260,12 +252,10 @@ public class DataManager {
         return result;
     }
 
-    public void ApiLocation() throws IOException, ParseException, LocationInArrayException {
+    public void ApiLocation(AidBox aidBox) throws IOException, ParseException, ContainerException {
         String jsonResponse = httpProvider.getDistancesAidbox();
         JSONParser parser = new JSONParser();
         JSONArray locationsArray = (JSONArray) parser.parse(jsonResponse);
-
-        locations = new LocationImp[locationsArray.size()];
 
         for (int i = 0; i < locationsArray.size(); i++) {
             JSONObject location = (JSONObject) locationsArray.get(i);
@@ -273,14 +263,20 @@ public class DataManager {
             String from = (String) location.get("from");
             JSONArray toArray = (JSONArray) location.get("to");
 
-            for (int j = 0; j < toArray.size(); j++) {
-                JSONObject toObject = (JSONObject) toArray.get(j);
+            if (from.equals(aidBox.getCode())) {
+                for (int j = 0; j < toArray.size(); j++) {
+                    JSONObject toObject = (JSONObject) toArray.get(j);
 
-                String name = (String) toObject.get("name");
-                double distance = ((Number) toObject.get("distance")).doubleValue();
-                double duration = ((Number) toObject.get("duration")).doubleValue();
+                    String name = (String) toObject.get("name");
+                    double distance = (long) toObject.get("distance");
+                    double duration = (long) toObject.get("duration");
 
-                addLocationM(new LocationImp(name, distance, duration));
+                    try {
+                        ((AidBoxImp) aidBox).addLocation(new LocationImp(name, distance, duration));
+                    } catch (AidBoxException ex) {
+                        Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
             }
         }
     }

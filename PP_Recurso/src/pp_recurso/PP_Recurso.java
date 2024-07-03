@@ -25,8 +25,8 @@ public class PP_Recurso {
     public static void main(String[] args) throws ContainerException {
 
         DataManager dataManager = new DataManager();
-        LocationImp[] aidboxes = dataManager.getLocations();
-        for (LocationImp aidbox : aidboxes) {
+        AidBox[] aidboxes = dataManager.getAidBox();
+        for (AidBox aidbox : aidboxes) {
             if (aidbox != null) {
                 System.out.println(aidbox);
             }
