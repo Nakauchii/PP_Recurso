@@ -48,7 +48,7 @@ public class InstitutionImp implements Institution {
         this.aidBoxes = new AidBoxImp[MAX];
         this.vehicles = new VehicleImp[MAX];
         this.pickingMaps = new PickingMap[MAX];
-        //this.reports = new Report[MAX_OBJECT];
+        this.reports = new Report[MAX];
     }
 
     @Override

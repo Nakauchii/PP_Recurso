@@ -19,11 +19,6 @@ public class MeasurementImp implements Measurement {
     private LocalDateTime date;
     private double value;
 
-    public MeasurementImp(LocalDateTime date, double value) {
-        this.date = date;
-        this.value = value;
-    }
-
     public MeasurementImp(String containerCode, LocalDateTime date, double value) {
         this.containerCode = containerCode;
         this.date = date;

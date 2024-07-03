@@ -59,28 +59,28 @@ public class ContainerImp implements Container {
     public Measurement[] getMeasurements() {
         Measurement[] copyMeasurements = new Measurement[numberMeasurements];
         for (int i = 0; i < numberMeasurements; i++) {
-            copyMeasurements[i] = new MeasurementImp(measurements[i].getDate(), measurements[i].getValue());
+            if (measurements[i] != null) {
+                copyMeasurements[i] = this.measurements[i];
+            }
         }
         return copyMeasurements;
     }
 
     @Override
     public Measurement[] getMeasurements(LocalDate ld) {
+        Measurement[] copyMeasurementsDate = new Measurement[numberMeasurements];
         int count = 0;
-        for (int i = 0; i < numberMeasurements; i++) {
-            if (measurements[i].getDate().equals(ld)) {
-                count++;
-            }
-        }
 
-        Measurement[] result = new Measurement[count];
-        int index = 0;
         for (int i = 0; i < numberMeasurements; i++) {
-            if (measurements[i].getDate().equals(ld)) {
-                result[index++] = new MeasurementImp(measurements[i].getDate(), measurements[i].getValue());
+            try {
+                if (measurements[i].getDate().toLocalDate().equals(ld)) {
+                    copyMeasurementsDate[count++] = measurements[i];
+                }
+            } catch (NullPointerException ex) {
+                ex.printStackTrace();
             }
         }
-        return result;
+        return copyMeasurementsDate;
     }
 
     @Override
