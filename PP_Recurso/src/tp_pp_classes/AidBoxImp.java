@@ -38,11 +38,11 @@ public class AidBoxImp implements AidBox {
         this.numberContainers = 0;
     }
     
-    //Construtor para fazer a cópia
-    public AidBoxImp(AidBox other) {
-        this.id = id;
-        this.code = code;
-        this.zone = zone;
+    //Construtor para o deep copy
+    public AidBoxImp(AidBoxImp other) {
+        this.id = other.id;
+        this.code = other.code;
+        this.zone = other.zone;
         this.containers = new ContainerImp[MAX];
         this.locations = new LocationImp[MAX];
         this.numberContainers = 0;

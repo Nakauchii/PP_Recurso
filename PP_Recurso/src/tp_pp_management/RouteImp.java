@@ -183,7 +183,7 @@ public class RouteImp implements com.estg.pickingManagement.Route {
     public AidBox[] getRoute() {
         AidBox[] copyRoutes = new AidBox[numberOfAidBoxes];
         for(int i = 0; i < numberOfAidBoxes; i++) {
-            copyRoutes[i] = new AidBoxImp(aidBoxes[i]);
+            copyRoutes[i] = new AidBoxImp((AidBoxImp)aidBoxes[i]);
         }
         return copyRoutes;
     }
