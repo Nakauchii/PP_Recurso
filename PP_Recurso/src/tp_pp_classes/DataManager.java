@@ -1,6 +1,11 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * Nome: Roger Nakauchi
+ * Número: 8210005
+ * Turna: LSIRCT1
+ *
+ * Nome: Fábio da Cunha
+ * Número: 8210619
+ * Turna: LSIRCT1
  */
 package tp_pp_classes;
 
@@ -32,24 +37,74 @@ import tp_pp_management.Capacity;
 import tp_pp_management.VehicleImp;
 
 /**
- *
- * @author fabio
+ * The DataManager class manages various entities such as alerts, containers,
+ * aid boxes, locations, measurements, and vehicles, retrieving data from an
+ * external API and handling storage and retrieval operations. It uses
+ * HttpProviderImp for HTTP operations and includes functionalities for adding,
+ * retrieving, and expanding arrays as needed.
  */
 public class DataManager {
 
+    /**
+     * Array to store alerts.
+     */
     private Alert[] alerts;
+
+    /**
+     * Maximum size of the alerts array.
+     */
     private final int MAX = 4;
+
+    /**
+     * Number of alerts currently stored in the array.
+     */
     private int numberAlerts;
 
+    /**
+     * Array to store containers.
+     */
     private Container[] containers;
+
+    /**
+     * Array to store aid boxes.
+     */
     private AidBox[] aidboxes;
+
+    /**
+     * Array to store locations.
+     */
     private LocationImp[] locations;
+
+    /**
+     * Array to store measurements.
+     */
     private Measurement[] measurements;
+
+    /**
+     * Array to store vehicles.
+     */
     private Vehicle[] vehicles;
+
+    /**
+     * Number of containers, aid boxes, locations, measurements and vehicles
+     * currently stored in the array.
+     */
     private int numberContainers, numberAidBoxes, numberLocations, numberMeasurements, numberVehicles;
+
+    /**
+     * Factor by which to expand arrays when they reach capacity.
+     */
     private final int EXPAND = 2;
+
+    /**
+     * HTTP provider for API communication.
+     */
     private HttpProviderImp httpProvider = new HttpProviderImp();
 
+    /**
+     * Constructs a DataManager object initializing arrays and retrieving
+     * initial data from APIs.
+     */
     public DataManager() {
 
         this.alerts = new Alert[MAX];
@@ -77,33 +132,54 @@ public class DataManager {
         }
     }
 
-    private void expandAlerts(){
+    /**
+     * Expands the alerts array when it reaches capacity.
+     */
+    private void expandAlerts() {
         Alert[] alert = new Alert[alerts.length * EXPAND];
-        for(int i = 0; i < numberAlerts; i++) {
+        for (int i = 0; i < numberAlerts; i++) {
             alert[i] = alerts[i];
         }
         alerts = alert;
     }
 
-    public boolean addAlert(Alert alert){
-        if (alert == null){
+    /**
+     * Adds an alert to the alerts array.
+     *
+     * @param alert the alert to add
+     * @return true if the alert was successfully added, false otherwise
+     */
+    public boolean addAlert(Alert alert) {
+        if (alert == null) {
             return false;
         }
-        if (numberAlerts > alerts.length){
+        if (numberAlerts > alerts.length) {
             expandAlerts();
         }
         alerts[numberAlerts++] = alert;
         return true;
     }
 
+    /**
+     * Retrieves a copy of the alerts array.
+     *
+     * @return an array of alerts
+     */
     public Alert[] getAlerts() {
         Alert[] copyAlerts = new Alert[numberAlerts];
-        for(int i = 0; i < numberAlerts; i++) {
+        for (int i = 0; i < numberAlerts; i++) {
             copyAlerts[i] = new Alert(alerts[i]);
         }
         return copyAlerts;
     }
 
+    /**
+     * Retrieves container data from an external API and populates the
+     * containers array.
+     *
+     * @throws IOException if there is an error reading from the API
+     * @throws ParseException if there is an error parsing API response
+     */
     public void ApiContainers() throws IOException, ParseException {
 
         String jsonResponse = httpProvider.getContainers();
@@ -146,6 +222,11 @@ public class DataManager {
         }
     }
 
+    /**
+     * Retrieves a copy of the containers array.
+     *
+     * @return an array of containers
+     */
     public Container[] getContainers() {
         Container[] result = new ContainerImp[numberContainers];
         for (int i = 0; i < numberContainers; i++) {
@@ -154,6 +235,14 @@ public class DataManager {
         return result;
     }
 
+    /**
+     * Adds a container to the containers array.
+     *
+     * @param cntnr the container to add
+     * @return true if the container was successfully added, false otherwise
+     * @throws ContainerInArrayException if the container already exists in the
+     * array
+     */
     public boolean addContainerM(Container cntnr) throws ContainerInArrayException {
         if (cntnr == null) {
             return false;
@@ -169,6 +258,13 @@ public class DataManager {
         return true;
     }
 
+    /**
+     * Retrieves an array of container types from an external API.
+     *
+     * @return an array of {@link ContainerType} objects.
+     * @throws IOException if an I/O error occurs during the API call.
+     * @throws ParseException if the response cannot be parsed correctly.
+     */
     public ContainerType[] getTypes() throws IOException, ParseException {
         String jsonResponse = httpProvider.getTypes();
         JSONParser parser = new JSONParser();
@@ -185,6 +281,13 @@ public class DataManager {
         return types;
     }
 
+    /**
+     * Finds a container by its code.
+     *
+     * @param code the code of the container to find.
+     * @return the {@link Container} with the specified code, or null if not
+     * found.
+     */
     private Container findContainer(String code) {
         if (code == null || containers == null) {
             return null;
@@ -198,6 +301,15 @@ public class DataManager {
         return null;
     }
 
+    /**
+     * Retrieves and processes aid box data from an external API.
+     *
+     * @throws IOException if there is an error reading from the API
+     * @throws ParseException if there is an error parsing API response
+     * @throws ContainerException if a container referenced by an aid box is not
+     * found
+     * @throws AidBoxInArrayException if the aid box already exists in the array
+     */
     public void ApiAidboxes() throws IOException, ParseException, ContainerException, AidBoxInArrayException {
         String jsonResponse = httpProvider.getAidBoxes();
         JSONParser parser = new JSONParser();
@@ -221,7 +333,7 @@ public class DataManager {
                 Container container = findContainer(codeContainer);
                 if (container != null) {
                     myAidBox.addContainer(container);
-                }else {
+                } else {
                     String alertDescription = "Container not found: " + codeContainer;
                     Alert alert = new Alert(alertDescription, aidbox);
                     addAlert(alert);
@@ -232,6 +344,14 @@ public class DataManager {
         }
     }
 
+    /**
+     * Adds a new aid box to the DataManager.
+     *
+     * @param aid the {@link AidBox} to be added.
+     * @return true if the aid box was added successfully, false otherwise.
+     * @throws AidBoxInArrayException if the aid box is already present in the
+     * array.
+     */
     public boolean addAidBoxM(AidBox aid) throws AidBoxInArrayException {
         if (aid == null) {
             return false;
@@ -246,6 +366,11 @@ public class DataManager {
         return true;
     }
 
+    /**
+     * Retrieves a copy of the aid boxes array.
+     *
+     * @return an array of aid boxes
+     */
     public AidBox[] getAidBox() {
         AidBox[] result = new AidBoxImp[aidboxes.length];
         for (int i = 0; i < aidboxes.length; i++) {
@@ -254,6 +379,16 @@ public class DataManager {
         return result;
     }
 
+    /**
+     * Retrieves and processes location data from an external API and associates
+     * it with an aid box.
+     *
+     * @param aidBox the aid box to associate locations with
+     * @throws IOException if there is an error reading from the API
+     * @throws ParseException if there is an error parsing API response
+     * @throws ContainerException if a container referenced by location data is
+     * not found
+     */
     public void ApiLocation(AidBox aidBox) throws IOException, ParseException, ContainerException {
         String jsonResponse = httpProvider.getDistancesAidbox();
         JSONParser parser = new JSONParser();
@@ -286,6 +421,14 @@ public class DataManager {
         }
     }
 
+    /**
+     * Adds a location to the locations array.
+     *
+     * @param loc the location to add
+     * @return true if the location was successfully added, false otherwise
+     * @throws LocationInArrayException if the location already exists in the
+     * array
+     */
     public boolean addLocationM(LocationImp loc) throws LocationInArrayException {
         if (loc == null) {
             return false;
@@ -307,6 +450,11 @@ public class DataManager {
         return true;
     }
 
+    /**
+     * Retrieves a copy of the locations array.
+     *
+     * @return an array of locations
+     */
     public LocationImp[] getLocations() {
         LocationImp[] result = new LocationImp[numberLocations];
         for (int i = 0; i < numberLocations; i++) {
@@ -315,6 +463,13 @@ public class DataManager {
         return result;
     }
 
+    /**
+     * Retrieves and processes measurement data from an external API.
+     *
+     * @throws IOException if there is an error reading from the API
+     * @throws ParseException if there is an error parsing API response
+     * @throws MeasurementException if a measurement already exists in the array
+     */
     public void ApiMeasurement() throws IOException, ParseException, MeasurementException {
         String jsonResponse = httpProvider.getReadings();
         JSONParser parser = new JSONParser();
@@ -337,6 +492,14 @@ public class DataManager {
         }
     }
 
+    /**
+     * Adds a measurement to the measurements array.
+     *
+     * @param msrnt the measurement to add
+     * @return true if the measurement was successfully added, false otherwise
+     * @throws MeasurementException if the measurement already exists in the
+     * array
+     */
     public boolean addMeasurementM(MeasurementImp msrnt) throws MeasurementException {
         if (msrnt == null) {
             return false;
@@ -350,6 +513,11 @@ public class DataManager {
         return true;
     }
 
+    /**
+     * Returns an array of measurements currently stored in the DataManager.
+     *
+     * @return an array of {@link Measurement} objects.
+     */
     public Measurement[] getMeasurement() {
         Measurement[] result = new Measurement[numberMeasurements];
         for (int i = 0; i < numberMeasurements; i++) {
@@ -357,7 +525,10 @@ public class DataManager {
         }
         return result;
     }
-    
+
+    /**
+     * Expands the vehicles array when it reaches capacity.
+     */
     private void expand() {
         Vehicle[] tmpCap = new VehicleImp[this.vehicles.length * EXPAND];
 
@@ -367,6 +538,13 @@ public class DataManager {
         this.vehicles = tmpCap;
     }
 
+    /**
+     * Retrieves and processes vehicle data from an external API.
+     *
+     * @throws IOException if there is an error reading from the API
+     * @throws ParseException if there is an error parsing API response
+     * @throws VehicleException if a vehicle already exists in the array
+     */
     public void ApiVehicles() throws IOException, ParseException, VehicleException {
         String jsonResponse = httpProvider.getVehicles();
         JSONParser parser = new JSONParser();
@@ -383,7 +561,7 @@ public class DataManager {
             VehicleImp v = new VehicleImp(code);
 
             for (Object key : capacityObject.keySet()) {
-                if(key != null){
+                if (key != null) {
                     String type = (String) key;
                     int capacity = ((Long) capacityObject.get(type)).intValue();
                     ContainerType containerType = new ContainerTypeImp(type);
@@ -410,7 +588,13 @@ public class DataManager {
         }
     }
 
-
+    /**
+     * Adds a vehicle to the vehicles array.
+     *
+     * @param vhcl the vehicle to add
+     * @return true if the vehicle was successfully added, false otherwise
+     * @throws MeasurementException if the vehicle already exists in the array
+     */
     public boolean addVehiclesM(VehicleImp vhcl) throws MeasurementException {
         if (vhcl == null) {
             return false;
@@ -420,15 +604,20 @@ public class DataManager {
                 throw new MeasurementException();
             }
         }
-        
-        if(numberVehicles > vehicles.length){
+
+        if (numberVehicles > vehicles.length) {
             expand();
         }
-        
+
         this.vehicles[numberVehicles++] = vhcl;
         return true;
     }
 
+    /**
+     * Retrieves a copy of the vehicles array.
+     *
+     * @return an array of vehicles
+     */
     public Vehicle[] getVehicles() {
         Vehicle[] result = new VehicleImp[numberVehicles];
         for (int i = 0; i < numberVehicles; i++) {

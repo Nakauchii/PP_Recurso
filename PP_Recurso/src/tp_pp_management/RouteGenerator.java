@@ -1,6 +1,11 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * Nome: Roger Nakauchi
+ * Número: 8210005
+ * Turna: LSIRCT1
+ *
+ * Nome: Fábio da Cunha
+ * Número: 8210619
+ * Turna: LSIRCT1
  */
 package tp_pp_management;
 
@@ -13,35 +18,53 @@ import com.estg.pickingManagement.exceptions.RouteException;
 import tp_pp_classes.DataManager;
 
 /**
+ * Implementation of the RouteGenerator interface.
  *
- * @author fabio
+ * This class generates routes for an institution based on the available
+ * vehicles, aid boxes, and containers managed by the DataManager.
  */
 public class RouteGenerator implements com.estg.pickingManagement.RouteGenerator {
 
+    /**
+     * The data manager that provides access to vehicles, aid boxes, and
+     * containers.
+     */
     private DataManager dataManager;
 
+    /**
+     * Constructs a new RouteGenerator with the specified DataManager.
+     * 
+     * @param dataManager The data manager that provides access to vehicles, aid boxes, and containers.
+     */
     public RouteGenerator(DataManager dataManager) {
         this.dataManager = dataManager;
     }
-    
+
+    /**
+     * Generates routes for the specified institution based on the available vehicles
+     * and aid boxes managed by the DataManager.
+     * 
+     * @param instn The institution for which the routes are generated.
+     * @return An array of routes.
+     */
     @Override
     public Route[] generateRoutes(Institution instn) {
-        
+
         Vehicle[] vehicles = dataManager.getVehicles();
         AidBox[] aidboxes = dataManager.getAidBox();
         Container[] containers = dataManager.getContainers();
         Route[] routes = new Route[vehicles.length];
-        
-        for(int i = 0; i < vehicles.length; i++) {
+
+        for (int i = 0; i < vehicles.length; i++) {
             routes[i] = new RouteImp(vehicles[i]);
         }
-        
+
         int routeIndex = 0;
-        for(int i = 0; i < aidboxes.length; i++) {
+        for (int i = 0; i < aidboxes.length; i++) {
             AidBox aidBox = aidboxes[i];
             boolean added = false;
-            
-            while(!added) {
+
+            while (!added) {
                 try {
                     routes[routeIndex].addAidBox(aidBox);
                     added = true;
@@ -52,5 +75,5 @@ public class RouteGenerator implements com.estg.pickingManagement.RouteGenerator
         }
         return routes;
     }
-    
+
 }
