@@ -29,6 +29,12 @@ public class VehicleImp implements Vehicle {
         this.code = code;
         this.capacity = new Capacity[MAX_OBJECT];
     }
+    
+    //Construtor para deep copy
+    public VehicleImp(VehicleImp other) {
+        this.code = other.code;
+        this.capacity = new Capacity[MAX_OBJECT];
+    }
 
     private int findCapacity(Capacity cpct) {
         for (int i = 0; i < this.nCapacity; i++) {

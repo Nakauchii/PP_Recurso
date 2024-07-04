@@ -24,6 +24,13 @@ public class MeasurementImp implements Measurement {
         this.date = date;
         this.value = value;
     }
+    
+    //Construtor para o deep copy
+    public MeasurementImp(MeasurementImp other) {
+        this.containerCode = other.containerCode;
+        this.date = other.date;
+        this.value = other.value;
+    }
 
     public String getContainerCode() {
         return containerCode;

@@ -203,7 +203,7 @@ public class InstitutionImp implements Institution {
         Vehicle[] tmpVehicle = new VehicleImp[this.nVehicle];
 
         for (int i = 0; i < this.nVehicle; i++) {
-            tmpVehicle[i] = this.vehicles[i];
+            tmpVehicle[i] = new VehicleImp((VehicleImp) this.vehicles[i]);
         }
 
         return tmpVehicle;
