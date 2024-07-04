@@ -37,7 +37,7 @@ public class RouteImp implements com.estg.pickingManagement.Route {
 
 
     public void expandAidBoxesArray() {
-        AidBox[] newAidboxes = new AidBox[aidBoxes.length * 2];
+        AidBox[] newAidboxes = new AidBox[aidBoxes.length * EXPAND];
         for (int i = 0; i < numberOfAidBoxes; i++) {
             newAidboxes[i] = aidBoxes[i];
         }
@@ -113,12 +113,7 @@ public class RouteImp implements com.estg.pickingManagement.Route {
 
     @Override
     public boolean containsAidBox(AidBox aidBox) {
-        for(int i = 0; i < numberOfAidBoxes; i++) {
-            if(aidBoxes[i].equals(aidBox)) {
-                return true;
-            }
-        }
-        return false;
+        return findAidBox(aidBox) != null;
     }
 
     @Override
@@ -160,23 +155,17 @@ public class RouteImp implements com.estg.pickingManagement.Route {
         if(numberOfAidBoxes >= aidBoxes.length) {
             expandAidBoxesArray();
         }
-        
-        boolean found = false;
+
         for(int i = 0; i < numberOfAidBoxes; i++) {
             if(aidBoxes[i].equals(aidBox)) {
-                for(int j = 0; j < numberOfAidBoxes; j++) {
+                for(int j = numberOfAidBoxes; j > i + 1; j--) {
                     aidBoxes[j] = aidBoxes[j - 1];
                 }
                 aidBoxes[i + 1] = aidBox1;
                 numberOfAidBoxes++;
-                found = true;
-                break;
             }
         }
-        if(!found) {
             throw new RouteException();
-        }
-        
     }
 
     @Override
