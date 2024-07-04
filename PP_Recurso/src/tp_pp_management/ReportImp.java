@@ -4,7 +4,11 @@
  */
 package tp_pp_management;
 
+import com.estg.core.AidBox;
 import com.estg.core.Container;
+import com.estg.core.Institution;
+import com.estg.core.exceptions.AidBoxException;
+import com.estg.pickingManagement.Route;
 import com.estg.pickingManagement.Vehicle;
 import java.time.LocalDateTime;
 import tp_pp_classes.ContainerImp;
@@ -24,11 +28,10 @@ public class ReportImp implements com.estg.pickingManagement.Report {
     private double totalDuration;
     private int nonPickedContainers;
     private int notUsedVehicles;
+    private Route route;
     
-    private DataManager dataManager;
-    
-    public ReportImp(DataManager dataManager) {
-        this.dataManager = dataManager;
+    public ReportImp(Route route) {
+        this.route = route;
         this.date = LocalDateTime.now();
         generatedReport();
     }
@@ -42,14 +45,16 @@ public class ReportImp implements com.estg.pickingManagement.Report {
         this.notUsedVehicles = calculateNotUsedVehicles();
     }
     
-    
+    //Não tenho ctz desse metodo
     private int calculateUsedVehicles() {
-        Vehicle[] vehicles = dataManager.getVehicles();
+        Institution[] institutions = (Institution[]) route.getRoute();
         int count = 0;
-        for(int i = 0; i < vehicles.length; i++) {
-            Vehicle vehicle = vehicles[i];
-            if(((VehicleImp) vehicle).isEnable()) {
-                count++;
+        for(int i = 0; i < institutions.length; i++) {
+            Vehicle[] vehicles = institutions[i].getVehicles();
+            for(int j = 0; j < vehicles.length; j++) {
+                if(((VehicleImp) vehicles[j]).isEnable()) {
+                    count++;
+                }
             }
         }
         return count;
@@ -57,12 +62,14 @@ public class ReportImp implements com.estg.pickingManagement.Report {
     
     
     public int calculatePickedContainers() {
-        Container[] containers = dataManager.getContainers();
+        AidBox[] aidboxes = route.getRoute();
         int count = 0;
-        for(int i = 0; i < containers.length; i++) {
-            Container container = containers[i];
-            if(((ContainerImp) container).isPicked()) {
-                count++;
+        for(int i = 0; i < aidboxes.length; i++) {
+            Container[] containers = aidboxes[i].getContainers();
+            for(int j = 0; j < containers.length; j++) {
+                if(((ContainerImp) containers[j]).isPicked()) {
+                    count++;
+                }
             }
         }
         return count;
@@ -70,46 +77,56 @@ public class ReportImp implements com.estg.pickingManagement.Report {
     
     
     public double calculateTotalDistance() {
-        double distance = 0.0;
-        LocationImp[] locations = dataManager.getLocations();
-        for(int i = 0; i < locations.length; i++) {
-            LocationImp location = locations[i];
-            distance += location.getDistance();
+        double totalDistance = 0;
+        AidBox[] aidboxes = route.getRoute();
+        for(int i = 0; i < aidboxes.length - 1; i++) {
+            try {
+                totalDistance += aidboxes[i].getDistance(aidboxes[i + 1]);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        return distance;
+        return totalDistance;
     }
     
     
     public double calculateTotalDuration() {
-        double duration = 0.0;
-        LocationImp[] locations = dataManager.getLocations();
-        for(int i = 0; i < locations.length; i++) {
-            LocationImp location = locations[i];
-            duration += location.getDuration();
+        double totalDuration = 0;
+        AidBox[] aidboxes = route.getRoute();
+        for(int i = 0; i < aidboxes.length - 1; i++) {
+            try {
+                totalDuration += aidboxes[i].getDuration(aidboxes[i + 1]);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        return duration;
+        return totalDuration;
     }
     
     public int calculateNonPickedContainers() {
-        Container[] containers = dataManager.getContainers();
+        AidBox[] aidboxes = route.getRoute();
         int count = 0;
-        for(int i = 0; i < containers.length; i++) {
-            Container container = containers[i];
-            if(!((ContainerImp) container).isPicked()) {
-                count++;
+        for(int i = 0; i < aidboxes.length; i++) {
+            Container[] containers = aidboxes[i].getContainers();
+            for(int j = 0; j < containers.length; j++) {
+                if(!((ContainerImp) containers[i]).isPicked()) {
+                    count++;
+                }
             }
         }
         return count;
     }
     
-    
+    //Tb, não tenho ctz desse metodo
     private int calculateNotUsedVehicles() {
-        Vehicle[] vehicles = dataManager.getVehicles();
+        Institution[] institutions = (Institution[]) route.getRoute();
         int count = 0;
-        for(int i = 0; i < vehicles.length; i++) {
-            Vehicle vehicle = vehicles[i];
-            if(!((VehicleImp) vehicle).isEnable()) {
-                count++;
+        for(int i = 0; i < institutions.length; i++) {
+            Vehicle[] vehicles = institutions[i].getVehicles();
+            for(int j = 0; j < vehicles.length; j++) {
+                if(!((VehicleImp) vehicles[j]).isEnable()) {
+                    count++;
+                }
             }
         }
         return count;

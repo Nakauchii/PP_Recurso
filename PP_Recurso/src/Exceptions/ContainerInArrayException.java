@@ -4,11 +4,13 @@
  */
 package Exceptions;
 
+import com.estg.core.exceptions.ContainerException;
+
 /**
  *
  * @author fabio
  */
-public class ContainerInArrayException extends Exception{
+public class ContainerInArrayException extends ContainerException{
     
     public ContainerInArrayException() {        
     }

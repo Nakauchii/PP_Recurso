@@ -4,11 +4,13 @@
  */
 package Exceptions;
 
+import com.estg.core.exceptions.AidBoxException;
+
 /**
  *
  * @author fabio
  */
-public class AidBoxInArrayException extends Exception{
+public class AidBoxInArrayException extends AidBoxException{
     
     public AidBoxInArrayException() {        
     }

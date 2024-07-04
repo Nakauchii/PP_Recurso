@@ -33,7 +33,6 @@ public class RouteImp implements com.estg.pickingManagement.Route {
         this.vehicle = vehicle;
         this.aidBoxes = new AidBox[INITIAL_CAPACITY];
         this.numberOfAidBoxes = 0;
-        this.report = new ReportImp(dataManager);
     }
     
     
