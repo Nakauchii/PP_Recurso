@@ -4,6 +4,7 @@
  */
 package tp_pp_management;
 
+import com.estg.core.Container;
 import com.estg.core.ContainerType;
 import com.estg.core.exceptions.AidBoxException;
 import com.estg.core.exceptions.VehicleException;
@@ -122,4 +123,25 @@ public class VehicleImp implements Vehicle {
         String s = capacityToString();
         return "\n\nVehicleImp{" + ", code=" + code + s + '}';
     }
+    
+    
+    public boolean canPick(Container container) {
+        if(container == null) {
+            return false;
+        }
+        
+        ContainerType containerType = container.getType();
+        double containerCapacity = container.getCapacity();
+        
+        for(int i = 0; i < nCapacity; i++) {
+            Capacity vehicleCapacity = capacity[i];
+            if(vehicleCapacity.getType().equals(containerType) && vehicleCapacity.getCapacity() >= containerCapacity) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    
+    
 }
