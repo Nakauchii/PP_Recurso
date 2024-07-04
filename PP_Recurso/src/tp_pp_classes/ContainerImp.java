@@ -109,7 +109,11 @@ public class ContainerImp implements Container {
                 throw new MeasurementException();
             }
         }
-        
+
+        if (((MeasurementImp) msrmnt).getContainerCode().equals(code)){
+            return false;
+        }
+
         if (numberMeasurements == measurements.length) {
             Measurement[] newMeasurements = new Measurement[measurements.length * 2];
             for (int i = 0; i < numberMeasurements; i++) {

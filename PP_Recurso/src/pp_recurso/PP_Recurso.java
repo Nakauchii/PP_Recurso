@@ -4,6 +4,7 @@
  */
 package pp_recurso;
 
+import Alert.Alert;
 import com.estg.core.AidBox;
 import com.estg.core.Container;
 import com.estg.core.ContainerType;
@@ -28,8 +29,8 @@ public class PP_Recurso {
     public static void main(String[] args) throws ContainerException, AidBoxException {
 
         DataManager dataManager = new DataManager();
-        Vehicle[] aidboxes = dataManager.getVehicles();
-        for (Vehicle aidbox : aidboxes) {
+        Alert[] aidboxes = dataManager.getAlerts();
+        for (Alert aidbox : aidboxes) {
             if (aidbox != null) {
                 System.out.println(aidbox);
             }

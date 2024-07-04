@@ -4,6 +4,7 @@
  */
 package tp_pp_classes;
 
+import Alert.Alert;
 import Exceptions.AidBoxInArrayException;
 import Exceptions.ContainerInArrayException;
 import Exceptions.LocationInArrayException;
@@ -36,6 +37,10 @@ import tp_pp_management.VehicleImp;
  */
 public class DataManager {
 
+    private Alert[] alerts;
+    private final int MAX = 4;
+    private int numberAlerts;
+
     private Container[] containers;
     private AidBox[] aidboxes;
     private LocationImp[] locations;
@@ -46,6 +51,10 @@ public class DataManager {
     private HttpProviderImp httpProvider = new HttpProviderImp();
 
     public DataManager() {
+
+        this.alerts = new Alert[MAX];
+        this.numberAlerts = 0;
+
         try {
             ApiContainers();
         } catch (IOException | ParseException ex) {
@@ -66,6 +75,33 @@ public class DataManager {
         } catch (IOException | ParseException | VehicleException ex) {
             Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private void expandAlerts(){
+        Alert[] alert = new Alert[alerts.length * EXPAND];
+        for(int i = 0; i < numberAlerts; i++) {
+            alert[i] = alerts[i];
+        }
+        alerts = alert;
+    }
+
+    public boolean addAlert(Alert alert){
+        if (alert == null){
+            return false;
+        }
+        if (numberAlerts > alerts.length){
+            expandAlerts();
+        }
+        alerts[numberAlerts++] = alert;
+        return true;
+    }
+
+    public Alert[] getAlerts() {
+        Alert[] copyAlerts = new Alert[numberAlerts];
+        for(int i = 0; i < numberAlerts; i++) {
+            copyAlerts[i] = new Alert(alerts[i]);
+        }
+        return copyAlerts;
     }
 
     public void ApiContainers() throws IOException, ParseException {
@@ -97,7 +133,10 @@ public class DataManager {
                 j++;
             }
             if (!found) {
-                throw new ParseException(1);
+                String alertDescription = "Unknown container type encountered: " + type;
+                Alert alert = new Alert(alertDescription, container);
+                addAlert(alert);
+                continue;
             }
             try {
                 addContainerM(new ContainerImp(id, code, capacity, containerType));
@@ -182,6 +221,10 @@ public class DataManager {
                 Container container = findContainer(codeContainer);
                 if (container != null) {
                     myAidBox.addContainer(container);
+                }else {
+                    String alertDescription = "Container not found: " + codeContainer;
+                    Alert alert = new Alert(alertDescription, aidbox);
+                    addAlert(alert);
                 }
             }
             ApiLocation(myAidBox);
@@ -233,6 +276,9 @@ public class DataManager {
                     try {
                         ((AidBoxImp) aidBox).addLocation(new LocationImp(name, distance, duration));
                     } catch (AidBoxException ex) {
+                        String errorMessage = "Error adding readings to the AidBox: " + ex.getMessage();
+                        Alert alert = new Alert(errorMessage, location);
+                        addAlert(alert);
                         Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
@@ -345,6 +391,9 @@ public class DataManager {
                     try {
                         v.addCapacity(cap);
                     } catch (VehicleException ex) {
+                        String errorMessage = "Error adding capacity to the vehicle " + v.getCode() + ": " + ex.getMessage();
+                        Alert alert = new Alert(errorMessage, vehicle);
+                        addAlert(alert);
                         Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
@@ -353,6 +402,9 @@ public class DataManager {
             try {
                 addVehiclesM(v);
             } catch (MeasurementException ex) {
+                String errorMessage = "Error adding vehicle " + v.getCode() + " to DataManager: " + ex.getMessage();
+                Alert alert = new Alert(errorMessage, capacityObject);
+                addAlert(alert);
                 Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
             }
         }

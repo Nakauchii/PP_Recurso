@@ -139,8 +139,6 @@ public class InstitutionImp implements Institution {
         if (findMeasuremet(msrmnt, cntnr) != null) {
             return false;
         }
-        
-        //if(msrmnt.getCode != cntnr.getCode())
         if (msrmnt.getValue() > cntnr.getCapacity()) {
             throw new ContainerException();
         }
@@ -225,6 +223,7 @@ public class InstitutionImp implements Institution {
             return false;
         }
 
+        enableVehicle(vhcl);
         this.vehicles[this.nVehicle++] = vhcl;
         return true;
     }

@@ -34,24 +34,33 @@ public class RouteImp implements com.estg.pickingManagement.Route {
         this.aidBoxes = new AidBox[INITIAL_CAPACITY];
         this.numberOfAidBoxes = 0;
     }
-    
-    
+
+
     public void expandAidBoxesArray() {
         AidBox[] newAidboxes = new AidBox[aidBoxes.length * 2];
-        for(int i = 0; i < numberOfAidBoxes; i++) {
+        for (int i = 0; i < numberOfAidBoxes; i++) {
             newAidboxes[i] = aidBoxes[i];
         }
         aidBoxes = newAidboxes;
     }
-    
+
     private boolean canVehiclePickAidbox(AidBox aidbox) {
         Container[] containers = aidbox.getContainers();
-        for(int i = 0; i < containers.length; i++) {
-            if(((VehicleImp) vehicle).canPick(containers[i])) {
+        for (int i = 0; i < containers.length; i++) {
+            if (((VehicleImp) vehicle).canPick(containers[i])) {
                 return true;
             }
         }
         return false;
+    }
+
+    private AidBox findAidBox(AidBox aid) {
+        for (int i = 0; i < numberOfAidBoxes; i++) {
+            if (aidBoxes[i].equals(aid)) {
+                return aidBoxes[i];
+            }
+        }
+        return null;
     }
 
     @Override
@@ -59,33 +68,39 @@ public class RouteImp implements com.estg.pickingManagement.Route {
         if (aidBox == null) {
             throw new RouteException();
         }
-        for(int i = 0; i < numberOfAidBoxes; i++) {
-            if(aidBoxes[i].equals(aidBox)) {
-                throw new RouteException();
-            }
+        if (findAidBox(aidBox) != null) {
+            throw new RouteException("AidBox already in the route");
         }
-        if(!canVehiclePickAidbox(aidBox)) {
+        if (!canVehiclePickAidbox(aidBox)) {
             throw new RouteException();
         }
-        if(numberOfAidBoxes >= aidBoxes.length) {
+        if (numberOfAidBoxes >= aidBoxes.length) {
             expandAidBoxesArray();
         }
         aidBoxes[numberOfAidBoxes++] = aidBox;
     }
-    
-    
-    
+
 
     @Override
     public AidBox removeAidBox(AidBox aidBox) throws RouteException {
-        if(aidBox == null) {
+        if (aidBox == null) {
             throw new RouteException();
         }
-        for(int i = 0; i < numberOfAidBoxes; i++) {
-            if(aidBoxes[i].equals(aidBox)) {
-                AidBox removedAidbox = aidBoxes[i];
-                
-                for(int j = 0; j < numberOfAidBoxes - 1; j++) {
+
+        AidBox found = findAidBox(aidBox);
+
+        if (found != null) {
+            int index = -1;
+
+            for (int i = 0; i < numberOfAidBoxes; i++) {
+                if (aidBoxes[i].equals(aidBox)) {
+                    index = i;
+                }
+            }
+            if (index != -1){
+                AidBox removedAidbox = aidBoxes[index];
+
+                for (int j = 0; j < numberOfAidBoxes - 1; j++) {
                     aidBoxes[j] = aidBoxes[j + 1];
                 }
                 aidBoxes[--numberOfAidBoxes] = null;
@@ -94,6 +109,7 @@ public class RouteImp implements com.estg.pickingManagement.Route {
         }
         throw new RouteException();
     }
+
 
     @Override
     public boolean containsAidBox(AidBox aidBox) {
