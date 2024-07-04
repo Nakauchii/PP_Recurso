@@ -36,6 +36,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import tp_pp_classes.DataManager;
 import tp_pp_classes.InstitutionImp;
+import tp_pp_classes.MeasurementImp;
 
 public class Menu {
 
@@ -108,17 +109,9 @@ public class Menu {
                     case 1:
                         showAidBoxMenu();
                         break;
-                    case 2: {
-                        try {
-                            addAidBox();
-                        } catch (ContainerException ex) {
-                            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (AidBoxException ex) {
-                            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
-                    break;
-
+                    case 2:
+                        showVehiclesMenu();
+                        break;
                     case 3: {
                         try {
                             viewDistances();
@@ -329,6 +322,13 @@ public class Menu {
                     break;
 
                     case 2:
+                        try {
+                            addMeasurements();
+                        } catch (MeasurementException e) {
+                            throw new RuntimeException(e);
+                        } catch (ContainerException e) {
+                            throw new RuntimeException(e);
+                        }
                         break;
                     case 3:
                         exit = true;
@@ -364,7 +364,7 @@ public class Menu {
 
     }
 
-    private void addMeasurements() throws IOException {
+    private void addMeasurements() throws IOException, MeasurementException, ContainerException {
 
         System.out.println("Enter the Container code: ");
         String containerCode = reader.readLine();
@@ -385,8 +385,106 @@ public class Menu {
             }
             i++;
         }
-        
-        
+
+        if (!found) {
+            System.out.println("Container not found.");
+        }
+
+        Measurement[] measurements = arrays.getMeasurement();
+
+        for (int j = 0; j < measurements.length; j++) {
+            if (measurements[j] instanceof MeasurementImp) {
+                MeasurementImp measurementImp = (MeasurementImp) measurements[j];
+                if (measurementImp.getContainerCode().equals(containerCode)){
+                    inst.addMeasurement(measurementImp,container);
+                }
+            }
+        }
+        System.out.println("Measurements added successfully.");
+    }
+
+    public void showVehiclesMenu() {
+        boolean exit = false;
+        while (!exit) {
+            System.out.println("=== Vehicles Menu ===");
+            System.out.println("1. List Vehicles");
+            System.out.println("2. Add Vehicles");
+            System.out.println("3. Back");
+            System.out.println("Select option: ");
+
+            try {
+                int option = Integer.parseInt(reader.readLine());
+
+                switch (option) {
+                    case 1:
+                        try {
+                            listVehicles();
+                        } catch (VehicleException e) {
+                            throw new RuntimeException(e);
+                        }
+                        break;
+                    case 2:
+                        try {
+                            addVehicle();
+                        } catch (VehicleException e) {
+                            throw new RuntimeException(e);
+                        }
+                        break;
+                    case 3:
+                        exit = true;
+                        break;
+                    default:
+                        System.out.println("Invalid selection. Try again!\n");
+                        break;
+                }
+
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.\n\n");
+            } catch (IOException e) {
+                System.out.println("Error reading input.");
+            }
+        }
+    }
+
+    private Vehicle[] listVehicles() throws VehicleException {
+
+        Vehicle[] vehicles = inst.getVehicles();
+
+        if (vehicles == null) {
+            throw new VehicleException();
+        } else {
+            System.out.println("Vehicles List: ");
+            for (Vehicle vhcl : vehicles) {
+                if (vhcl != null) {
+                    System.out.println(vhcl);
+                }
+            }
+            return vehicles;
+        }
+
+    }
+
+    private void addVehicle() throws VehicleException {
+
+        try {
+            System.out.print("Enter the Vehicle code: ");
+            String code = reader.readLine();
+
+            Vehicle[] vehicles = arrays.getVehicles();
+
+            boolean found = false;
+            for (int i = 0; i < vehicles.length; i++) {
+                if (vehicles[i] != null && vehicles[i].getCode().equals(code)) {
+                    inst.addVehicle(vehicles[i]);
+                    found = true;
+                }
+            }
+            if (!found) {
+                throw new VehicleException("Vehicle with code '\" + code + \"' not found.");
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public static void main(String[] args) {

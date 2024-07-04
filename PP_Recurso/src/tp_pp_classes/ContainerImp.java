@@ -31,11 +31,14 @@ public class ContainerImp implements Container {
     
     private boolean picked;
 
+    private final int MAX = 2;
+
     public ContainerImp(String id, String code, int capacity, ContainerType type) {
         this.id = id;
         this.code = code;
         this.capacity = capacity;
         this.type = type;
+        this.measurements = new MeasurementImp[MAX];
     }
 
     @Override
@@ -106,16 +109,7 @@ public class ContainerImp implements Container {
                 throw new MeasurementException();
             }
         }
-
-        //Verificar se ja tem um measurement com a mesma data
-        if (measurements[numberMeasurements].getDate().equals(msrmnt.getDate())) {
-            if (measurements[numberMeasurements].getValue() != msrmnt.getValue()) {
-                throw new MeasurementException();
-            }
-            return false; //Measurement ja existe
-        }
-
-        //Faz a adição
+        
         if (numberMeasurements == measurements.length) {
             Measurement[] newMeasurements = new Measurement[measurements.length * 2];
             for (int i = 0; i < numberMeasurements; i++) {
@@ -141,7 +135,15 @@ public class ContainerImp implements Container {
 
     @Override
     public String toString() {
-        return "ContainerImp{" + "id=" + id + ", code=" + code + ", capacity=" + capacity + type + '}';
+        String result =  "ContainerImp{" + "id=" + id + ", code=" + code + ", capacity=" + capacity + type + "\n"
+        + "Measurements:\n";
+
+        for (int i = 0; i < numberMeasurements; i++) {
+            if (measurements[i] != null) {
+                result += measurements[i].toString() + "\n";
+            }
+        }
+        return result;
     }
 
 }
