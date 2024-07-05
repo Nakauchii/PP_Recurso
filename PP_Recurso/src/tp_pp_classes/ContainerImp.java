@@ -43,11 +43,6 @@ public class ContainerImp implements Container {
     private int capacity;
 
     /**
-     * The current load of the container.
-     */
-    private double load;
-
-    /**
      * The type of the container.
      */
     private ContainerType type;
@@ -88,7 +83,6 @@ public class ContainerImp implements Container {
         this.capacity = capacity;
         this.type = type;
         this.measurements = new MeasurementImp[MAX];
-        this.load = 0;
     }
 
     /**
@@ -117,7 +111,11 @@ public class ContainerImp implements Container {
      * @return the current load of the container
      */
     public double getLoad() {
-        return this.load;
+        double totalLoad = 0;
+        for(int i = 0; i < numberMeasurements; i++) {
+            totalLoad += measurements[i].getValue();
+        }
+        return totalLoad;
     }
 
     /**
@@ -156,14 +154,6 @@ public class ContainerImp implements Container {
     public void setPicked(boolean picked) {
         this.picked = picked;
     }
-    
-    public void addLoad(double load) throws IllegalAccessException {
-        if(this.load + load > capacity) {
-            throw new IllegalAccessException("Load is bigger than capacity");
-        }
-        this.load += load;
-    }
-    
 
     /**
      * Returns an array of measurements associated with the container.
