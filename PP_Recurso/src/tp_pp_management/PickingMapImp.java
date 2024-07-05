@@ -68,6 +68,11 @@ public class PickingMapImp implements PickingMap {
         return this.routes;
     }
 
+    /**
+     * Sets the routes associated with the picking map.
+     *
+     * @param routes An array of Route objects to be set.
+     */
     public void setRoutes(Route[] routes){
 
         for ( int i = 0; i < routes.length; i++){

@@ -1,20 +1,34 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * Nome: Roger Nakauchi
+ * Número: 8210005
+ * Turna: LSIRCT1
+ *
+ * Nome: Fábio da Cunha
+ * Número: 8210619
+ * Turna: LSIRCT1
  */
 package Exceptions;
 
 import com.estg.core.exceptions.VehicleException;
 
 /**
- *
- * @author Roger Nakauchi
+ * Exception thrown when there is an issue with a vehicle in the array.
  */
 public class VehicleInArrayException extends VehicleException {
-    
-    public VehicleInArrayException() {        
+
+    /**
+     * Constructs a new VehicleInArrayException with {@code null} as its detail
+     * message.
+     */
+    public VehicleInArrayException() {
     }
-    
+
+    /**
+     * Constructs a new VehicleInArrayException with the specified detail
+     * message.
+     *
+     * @param message the detail message
+     */
     public VehicleInArrayException(String message) {
         super(message);
     }
