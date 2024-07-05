@@ -14,9 +14,8 @@ import com.estg.core.Container;
 import com.estg.core.ContainerType;
 import com.estg.core.exceptions.AidBoxException;
 import com.estg.core.exceptions.ContainerException;
-import java.lang.module.FindException;
+
 import java.util.Objects;
-import tp_pp_classes.LocationImp;
 
 /**
  * Implementation of the {@link AidBox} interface representing an aid box with a
@@ -350,16 +349,9 @@ public class AidBoxImp implements AidBox {
             }
         }
 
-        result += "Locations:\n";
-
-        for (int i = 0; i < nLocations; i++) {
-            if (locations[i] != null) {
-                result += locations[i].toString() + "\n";
-            }
-        }
-
         return result;
     }
+
 
     /**
      * Indicates whether some other object is "equal to" this one.
@@ -382,5 +374,6 @@ public class AidBoxImp implements AidBox {
         final AidBoxImp other = (AidBoxImp) obj;
         return Objects.equals(this.code, other.code);
     }
+
 
 }

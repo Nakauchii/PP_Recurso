@@ -14,6 +14,9 @@ import com.estg.core.Container;
 import com.estg.core.ContainerType;
 import com.estg.core.Measurement;
 import com.estg.core.exceptions.MeasurementException;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -65,6 +68,7 @@ public class ContainerImp implements Container {
      */
     private final int MAX = 2;
 
+
     /**
      * Constructs a new ContainerImp with the specified id, code, capacity, and type.
      *
@@ -73,8 +77,7 @@ public class ContainerImp implements Container {
      * @param capacity the capacity of the container
      * @param type the type of the container
      */
-    public ContainerImp(String id, String code, int capacity, ContainerType type) {
-        this.id = id;
+    public ContainerImp( String id,String code, int capacity, ContainerType type) {
         this.code = code;
         this.capacity = capacity;
         this.type = type;
@@ -198,9 +201,9 @@ public class ContainerImp implements Container {
             }
         }
 
-        if (((MeasurementImp) msrmnt).getContainerCode().equals(code)){
+        /*if (((MeasurementImp) msrmnt).getContainerCode().equals(code)){
             return false;
-        }
+        }*/
 
         if (numberMeasurements == measurements.length) {
             Measurement[] newMeasurements = new Measurement[measurements.length * 2];
@@ -241,7 +244,7 @@ public class ContainerImp implements Container {
     @Override
     public String toString() {
         String result =  "ContainerImp{" + "id=" + id + ", code=" + code + ", capacity=" + capacity + type + "\n"
-        + "Measurements:\n";
+                + "Measurements:\n";
 
         for (int i = 0; i < numberMeasurements; i++) {
             if (measurements[i] != null) {
@@ -249,6 +252,13 @@ public class ContainerImp implements Container {
             }
         }
         return result;
+    }
+
+    public boolean isPerishable() {
+        if (type instanceof ContainerTypeImp) {
+            return ((ContainerTypeImp) type).isPerishable();
+        }
+        return false;
     }
 
 }

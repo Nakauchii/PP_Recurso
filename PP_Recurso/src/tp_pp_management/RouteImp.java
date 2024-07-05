@@ -69,7 +69,7 @@ public class RouteImp implements com.estg.pickingManagement.Route {
      *
      * @param vehicle The vehicle assigned to this route.
      */
-    public RouteImp(Vehicle vehicle) {
+    public RouteImp(VehicleImp vehicle) {
         this.vehicle = vehicle;
         this.aidBoxes = new AidBox[INITIAL_CAPACITY];
         this.numberOfAidBoxes = 0;
@@ -127,13 +127,13 @@ public class RouteImp implements com.estg.pickingManagement.Route {
     @Override
     public void addAidBox(AidBox aidBox) throws RouteException {
         if (aidBox == null) {
-            throw new RouteException();
+            throw new RouteException("Cannot add a null aidbox");
         }
         if (findAidBox(aidBox) != null) {
             throw new RouteException("AidBox already in the route");
         }
         if (!canVehiclePickAidbox(aidBox)) {
-            throw new RouteException();
+            throw new RouteException("Vehicle can´t pick AidBox");
         }
         if (numberOfAidBoxes >= aidBoxes.length) {
             expandAidBoxesArray();

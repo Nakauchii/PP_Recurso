@@ -70,6 +70,10 @@ public class ContainerTypeImp implements ContainerType {
     public String toString() {
         return type ;
     }
+
+    public boolean isPerishable(){
+        return "perishable food".equalsIgnoreCase(type);
+    }
     
     
     

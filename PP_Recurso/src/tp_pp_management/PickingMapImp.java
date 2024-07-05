@@ -27,21 +27,25 @@ public class PickingMapImp implements PickingMap {
      */
     private LocalDateTime date;
 
+    private static int INICIALIZE_ROUTE = 5;
+
     /**
      * The routes associated with the picking map.
      */
     private Route[] routes;
+
+    private int nRoutes;
 
     /**
      * Constructs a new PickingMapImp instance with the specified date and
      * routes.
      *
      * @param date The date of the picking map.
-     * @param routes The routes associated with the picking map.
      */
-    public PickingMapImp(LocalDateTime date, Route[] routes) {
+    public PickingMapImp(LocalDateTime date) {
         this.date = date;
-        this.routes = routes;
+        this.routes = new RouteImp[INICIALIZE_ROUTE];
+        this.nRoutes = 0;
     }
 
     /**
@@ -62,6 +66,21 @@ public class PickingMapImp implements PickingMap {
     @Override
     public Route[] getRoutes() {
         return this.routes;
+    }
+
+    public void setRoutes(Route[] routes){
+
+        for ( int i = 0; i < routes.length; i++){
+            if ( routes[i] != null){
+                this.nRoutes++;
+            }
+        }
+
+        if(this.nRoutes == this.routes.length){
+            this.routes = new Route[nRoutes];
+        }
+
+        this.routes = routes;
     }
 
 }

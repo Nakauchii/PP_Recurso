@@ -22,7 +22,17 @@ import com.estg.core.exceptions.VehicleException;
 import com.estg.pickingManagement.PickingMap;
 import com.estg.pickingManagement.Report;
 import com.estg.pickingManagement.Vehicle;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDateTime;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import tp_pp_management.ReportImp;
 import tp_pp_management.VehicleImp;
 
@@ -40,7 +50,7 @@ public class InstitutionImp implements Institution {
      * The initial maximum number of objects that can be stored.
      */
     private static final int MAX = 10;
-    
+
     /**
      * The factor by which arrays are expanded when they reach capacity.
      */
@@ -50,47 +60,47 @@ public class InstitutionImp implements Institution {
      * The current number of aid boxes in the institution.
      */
     private int nAidBox;
-    
+
     /**
      * The current number of vehicles in the institution.
      */
     private int nVehicle;
-    
+
     /**
      * The current number of picking maps in the institution.
      */
     private int nPickingMap;
-    
+
     /**
      * The current number of reports in the institution.
      */
     private int nReport;
-    
+
     /**
      * Array of aid boxes in the institution.
      */
     private AidBox[] aidBoxes;
-    
+
     /**
      * Array of containers in the institution.
      */
     private Container[] containers;
-    
+
     /**
      * Array of vehicles in the institution.
      */
     private Vehicle[] vehicles;
-    
+
     /**
      * Name of the institution.
      */
     private String name;
-    
+
     /**
      * Array of picking maps in the institution.
      */
     private PickingMap[] pickingMaps;
-    
+
     /**
      * Array of reports in the institution.
      */
@@ -98,7 +108,7 @@ public class InstitutionImp implements Institution {
 
     /**
      * Constructor for the InstitutionImp class.
-     * 
+     *
      * @param name The name of the institution.
      */
     public InstitutionImp(String name) {
@@ -114,7 +124,7 @@ public class InstitutionImp implements Institution {
 
     /**
      * Gets the name of the institution.
-     * 
+     *
      * @return The name of the institution.
      */
     @Override
@@ -124,7 +134,7 @@ public class InstitutionImp implements Institution {
 
     /**
      * Finds a specific aid box in the institution.
-     * 
+     *
      * @param aidBox The aid box to search for.
      * @return The aid box if found, otherwise null.
      */
@@ -139,7 +149,7 @@ public class InstitutionImp implements Institution {
 
     /**
      * Checks if an aid box contains duplicate containers.
-     * 
+     *
      * @param aidbox The aid box to check.
      * @return true if there are duplicate containers, otherwise false.
      */
@@ -169,7 +179,7 @@ public class InstitutionImp implements Institution {
 
     /**
      * Adds a new aid box to the institution.
-     * 
+     *
      * @param aidbox The aid box to be added.
      * @return true if the aid box was successfully added, otherwise false.
      * @throws AidBoxException If the aid box is null or contains duplicate containers.
@@ -198,7 +208,7 @@ public class InstitutionImp implements Institution {
 
     /**
      * Checks if a specific container exists in the institution.
-     * 
+     *
      * @param ct The container to check.
      * @return true if the container exists, otherwise false.
      */
@@ -214,7 +224,7 @@ public class InstitutionImp implements Institution {
 
     /**
      * Finds a specific measurement in a container.
-     * 
+     *
      * @param msrmnt The measurement to find.
      * @param cntnr The container in which to find the measurement.
      * @return The measurement if found, otherwise null.
@@ -232,7 +242,7 @@ public class InstitutionImp implements Institution {
 
     /**
      * Adds a measurement to a specific container in the institution.
-     * 
+     *
      * @param msrmnt The measurement to be added.
      * @param cntnr The container to which the measurement will be added.
      * @return true if the measurement was successfully added, otherwise false.
@@ -263,7 +273,7 @@ public class InstitutionImp implements Institution {
 
     /**
      * Retrieves all aid boxes in the institution.
-     * 
+     *
      * @return An array of {@link AidBox}.
      */
     @Override
@@ -279,7 +289,7 @@ public class InstitutionImp implements Institution {
 
     /**
      * Retrieves a specific container from an aid box based on the container type.
-     * 
+     *
      * @param aidbox The aid box from which to retrieve the container.
      * @param ct The type of container to retrieve.
      * @return The container if found.
@@ -304,7 +314,7 @@ public class InstitutionImp implements Institution {
 
     /**
      * Finds a specific vehicle in the institution.
-     * 
+     *
      * @param vhcl The vehicle to search for.
      * @return The vehicle if found, otherwise null.
      */
@@ -331,7 +341,7 @@ public class InstitutionImp implements Institution {
 
     /**
      * Retrieves all vehicles in the institution.
-     * 
+     *
      * @return An array of {@link Vehicle}.
      */
     @Override
@@ -347,7 +357,7 @@ public class InstitutionImp implements Institution {
 
     /**
      * Adds a new vehicle to the institution.
-     * 
+     *
      * @param vhcl The vehicle to be added.
      * @return true if the vehicle was successfully added, otherwise false.
      * @throws VehicleException If the vehicle already exists or is null.
@@ -366,14 +376,13 @@ public class InstitutionImp implements Institution {
             return false;
         }
 
-        enableVehicle(vhcl);
         this.vehicles[this.nVehicle++] = vhcl;
         return true;
     }
 
     /**
      * Disables a specific vehicle in the institution.
-     * 
+     *
      * @param vhcl The vehicle to be disabled.
      * @throws VehicleException If the vehicle is not found or is already disabled.
      */
@@ -393,7 +402,7 @@ public class InstitutionImp implements Institution {
 
     /**
      * Enables a specific vehicle in the institution.
-     * 
+     *
      * @param vhcl The vehicle to be enabled.
      * @throws VehicleException If the vehicle is not found or is already enabled.
      */
@@ -413,7 +422,7 @@ public class InstitutionImp implements Institution {
 
     /**
      * Finds a specific picking map in the institution.
-     * 
+     *
      * @param pm The picking map to search for.
      * @return The picking map if found, otherwise null.
      */
@@ -440,7 +449,7 @@ public class InstitutionImp implements Institution {
 
     /**
      * Adds a new picking map to the institution.
-     * 
+     *
      * @param pm The picking map to be added.
      * @return true if the picking map was successfully added, otherwise false.
      * @throws PickingMapException If the picking map is null or already exists.
@@ -465,7 +474,7 @@ public class InstitutionImp implements Institution {
 
     /**
      * Retrieves all picking maps in the institution.
-     * 
+     *
      * @return An array of {@link PickingMap}.
      */
     @Override
@@ -479,7 +488,7 @@ public class InstitutionImp implements Institution {
 
     /**
      * Retrieves all picking maps in the institution within a date range.
-     * 
+     *
      * @param ldt The start date of the range.
      * @param ldt1 The end date of the range.
      * @return An array of {@link PickingMap}.
@@ -499,7 +508,7 @@ public class InstitutionImp implements Institution {
 
     /**
      * Retrieves the most recent picking map in the institution.
-     * 
+     *
      * @return The most recent picking map.
      * @throws PickingMapException If there are no picking maps in the institution.
      */
@@ -519,7 +528,7 @@ public class InstitutionImp implements Institution {
 
     /**
      * Retrieves the distance from an aid box to the base location.
-     * 
+     *
      * @param aidbox The aid box for which to calculate the distance.
      * @return The distance to the base location.
      * @throws AidBoxException If the aid box is invalid or not found.
@@ -540,7 +549,7 @@ public class InstitutionImp implements Institution {
 
     /**
      * Checks if this institution is equal to another object.
-     * 
+     *
      * @param obj The object to compare.
      * @return true if the objects are equal, otherwise false.
      */
@@ -569,7 +578,7 @@ public class InstitutionImp implements Institution {
 
     /**
      * Adds a new report to the institution.
-     * 
+     *
      * @param report The report to be added.
      * @return true if the report was successfully added, otherwise false.
      */
@@ -587,7 +596,7 @@ public class InstitutionImp implements Institution {
 
     /**
      * Retrieves all reports in the institution.
-     * 
+     *
      * @return An array of {@link Report}.
      */
     public Report[] getReports() {
@@ -597,5 +606,31 @@ public class InstitutionImp implements Institution {
         }
         return reports;
     }
+
+    private String aidBoxToString(){
+        String s = "";
+
+        for(int i = 0; i < this.nAidBox; i++){
+            s += this.aidBoxes[i].toString();
+        }
+        return s;
+    }
+
+    private String vehicleToString(){
+        String s = "";
+
+        for(int i = 0; i < this.nVehicle; i++){
+            s += this.vehicles[i].toString();
+        }
+        return s;
+    }
+
+    @Override
+    public String toString() {
+        String s = aidBoxToString();
+        String s2 = vehicleToString();
+        return "\n\nInstitutionInc{" + s + s2 +'}';
+    }
+
 
 }
