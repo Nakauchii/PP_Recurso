@@ -187,7 +187,7 @@ public class InstitutionImp implements Institution {
     @Override
     public boolean addAidBox(AidBox aidbox) throws AidBoxException {
         if (aidbox == null) {
-            throw new AidBoxException();
+            throw new AidBoxException("Aid Box is null");
         }
 
         if (findAidBox(aidbox) != null) {
@@ -195,7 +195,7 @@ public class InstitutionImp implements Institution {
         }
 
         if (hasDuplicateContainers(aidbox)) {
-            throw new AidBoxException();
+            throw new AidBoxException("Aid Box is invalid (the type is duplicated)");
         }
 
         if (this.nAidBox == this.aidBoxes.length) {
@@ -252,20 +252,20 @@ public class InstitutionImp implements Institution {
     @Override
     public boolean addMeasurement(Measurement msrmnt, Container cntnr) throws ContainerException, MeasurementException {
         if (hasContainer(cntnr) == false) {
-            throw new ContainerException();
+            throw new ContainerException("The container doesnt exit in the aidbox");
         }
 
         if (findMeasuremet(msrmnt, cntnr) != null) {
             return false;
         }
         if (msrmnt.getValue() > cntnr.getCapacity()) {
-            throw new ContainerException();
+            throw new ContainerException("The measurement is higher than the capacity of the container");
         }
 
         try {
             cntnr.addMeasurement(msrmnt);
         } catch (MeasurementException exc) {
-            throw new ContainerException();
+            throw new ContainerException("Can´t add measurement");
         }
 
         return true;
@@ -389,12 +389,12 @@ public class InstitutionImp implements Institution {
     @Override
     public void disableVehicle(Vehicle vhcl) throws VehicleException {
         if (findVehicle(vhcl) == null) {
-            throw new VehicleException();
+            throw new VehicleException("Vehicle not found");
         }
 
         VehicleImp myVehicle = (VehicleImp) vhcl;
         if (!myVehicle.isEnable()) {
-            throw new VehicleException();
+            throw new VehicleException("The vehicle is already disable");
         }
 
         myVehicle.setEnable(false);
@@ -409,12 +409,12 @@ public class InstitutionImp implements Institution {
     @Override
     public void enableVehicle(Vehicle vhcl) throws VehicleException {
         if (findVehicle(vhcl) == null) {
-            throw new VehicleException();
+            throw new VehicleException("Vehicle not found");
         }
 
         VehicleImp myVehicle = (VehicleImp) vhcl;
         if (!myVehicle.isEnable()) {
-            throw new VehicleException();
+            throw new VehicleException("The vehicle is already enable");
         }
 
         myVehicle.setEnable(false);
@@ -607,30 +607,52 @@ public class InstitutionImp implements Institution {
         return reports;
     }
 
-    private String aidBoxToString(){
+    /**
+     * Generates a string representation of all AidBoxes contained in this Institution.
+     * Each AidBox is converted to its string representation using the toString() method.
+     *
+     * @return A string containing the representation of all AidBoxes in this Institution.
+     */
+    private String aidBoxToString() {
         String s = "";
 
-        for(int i = 0; i < this.nAidBox; i++){
+        for (int i = 0; i < this.nAidBox; i++) {
             s += this.aidBoxes[i].toString();
         }
         return s;
     }
 
-    private String vehicleToString(){
+
+
+    /**
+     * Generates a string representation of all Vehicles contained in this Institution.
+     * Each Vehicle is converted to its string representation using the toString() method.
+     *
+     * @return A string containing the representation of all Vehicles in this Institution.
+     */
+    private String vehicleToString() {
         String s = "";
 
-        for(int i = 0; i < this.nVehicle; i++){
+        for (int i = 0; i < this.nVehicle; i++) {
             s += this.vehicles[i].toString();
         }
         return s;
     }
 
+
+    /**
+     * Returns a string representation of this Institution, including all its AidBoxes
+     * and Vehicles. Uses the aidBoxToString() and vehicleToString() methods to obtain
+     * string representations of AidBoxes and Vehicles, respectively.
+     *
+     * @return A string containing the complete representation of this Institution,
+     *         including all its AidBoxes and Vehicles.
+     */
     @Override
     public String toString() {
         String s = aidBoxToString();
         String s2 = vehicleToString();
-        return "\n\nInstitutionInc{" + s + s2 +'}';
+        return "\n\nInstitutionInc{" + s + s2 + '}';
     }
-
 
 }

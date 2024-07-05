@@ -126,24 +126,4 @@ public class MeasurementImp implements Measurement {
         return Objects.equals(this.date, other.date);
     }
 
-    public JSONObject toJsonObj() {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("contentor", this.containerCode);
-        jsonObject.put("date", this.date.toString());
-        jsonObject.put("value", this.value);
-        return jsonObject;
-    }
-
-    public static MeasurementImp fromJsonObj(JSONObject jsonObject) {
-        try {
-            String contentor = (String) jsonObject.get("contentor");
-            String dateString = (String) jsonObject.get("date");
-            LocalDateTime date = LocalDateTime.parse(dateString);
-            double value = ((Number) jsonObject.get("value")).doubleValue();
-            return new MeasurementImp(contentor, date, value);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid Measurement data in JSON: " + jsonObject.toJSONString(), e);
-        }
-    }
-
 }

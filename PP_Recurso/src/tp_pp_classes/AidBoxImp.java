@@ -353,6 +353,11 @@ public class AidBoxImp implements AidBox {
     }
 
 
+    /**
+     * Checks if there is at least one perishable container among the stored containers.
+     *
+     * @return {@code true} if there is at least one perishable container, {@code false} otherwise.
+     */
     public boolean hasPerishableContainer() {
         for (int i = 0; i < numberContainers; i++) {
             if (containers[i].getType() instanceof ContainerTypeImp) {
@@ -363,6 +368,7 @@ public class AidBoxImp implements AidBox {
         }
         return false;
     }
+
 
 
 

@@ -71,10 +71,16 @@ public class ContainerTypeImp implements ContainerType {
         return type ;
     }
 
-    public boolean isPerishable(){
+    /**
+     * Checks if the container type represents perishable items.
+     *
+     * @return {@code true} if the container type is "perishable food", ignoring case; {@code false} otherwise.
+     */
+    public boolean isPerishable() {
         return "perishable food".equalsIgnoreCase(type);
     }
-    
-    
-    
+
+
+
+
 }

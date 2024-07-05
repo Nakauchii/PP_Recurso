@@ -68,6 +68,8 @@ public class ContainerImp implements Container {
      */
     private final int MAX = 2;
 
+    private final int EXPAND = 2;
+
 
     /**
      * Constructs a new ContainerImp with the specified id, code, capacity, and type.
@@ -157,6 +159,16 @@ public class ContainerImp implements Container {
         return copyMeasurements;
     }
 
+    private void expandMeasurements() {
+        Measurement aux[] = new Measurement[this.measurements.length * EXPAND];
+
+        for (int i = 0; i < this.measurements.length; i++) {
+            aux[i] = this.measurements[i];
+        }
+
+        this.measurements = aux;
+    }
+
     /**
      * Returns an array of measurements taken on a specific date.
      *
@@ -190,27 +202,18 @@ public class ContainerImp implements Container {
     @Override
     public boolean addMeasurement(Measurement msrmnt) throws MeasurementException {
         if (msrmnt == null) {
-            throw new MeasurementException();
+            throw new MeasurementException("Cant add a measurement that is null");
         }
         if (msrmnt.getValue() < 0) {
-            throw new MeasurementException();
+            throw new MeasurementException("Cannot add a measurement less than 0");
         }
         if (numberMeasurements > 0) {
             if (msrmnt.getDate().isBefore(measurements[numberMeasurements - 1].getDate())) {
-                throw new MeasurementException();
+                throw new MeasurementException("Measurement cannot be before the last measurement");
             }
         }
-
-        /*if (((MeasurementImp) msrmnt).getContainerCode().equals(code)){
-            return false;
-        }*/
-
         if (numberMeasurements == measurements.length) {
-            Measurement[] newMeasurements = new Measurement[measurements.length * 2];
-            for (int i = 0; i < numberMeasurements; i++) {
-                newMeasurements[i] = measurements[i];
-            }
-            measurements = newMeasurements;
+            expandMeasurements();
         }
         measurements[numberMeasurements++] = msrmnt;
         return true;
