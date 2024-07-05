@@ -368,8 +368,22 @@ public class AidBoxImp implements AidBox {
         }
         return false;
     }
-
-
+    
+    public double getCurrentLoadPercentage() {
+        double totalCapacity = 0;
+        double currentLoad = 0;
+        
+        for(int i = 0; i < numberContainers; i++) {
+            totalCapacity += containers[i].getCapacity();
+            currentLoad += ((ContainerImp) containers[i]).getLoad();
+        }
+        
+        if(totalCapacity == 0) {
+            return 0;
+        } else {
+            return (currentLoad / totalCapacity) * 100;
+        }
+    }
 
 
     /**

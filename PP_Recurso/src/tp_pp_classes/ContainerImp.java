@@ -7,7 +7,6 @@
  * Número: 8210619
  * Turna: LSIRCT1
  */
-
 package tp_pp_classes;
 
 import com.estg.core.Container;
@@ -44,6 +43,11 @@ public class ContainerImp implements Container {
     private int capacity;
 
     /**
+     * The current load of the container.
+     */
+    private double load;
+
+    /**
      * The type of the container.
      */
     private ContainerType type;
@@ -57,7 +61,7 @@ public class ContainerImp implements Container {
      * The current number of measurements in the container.
      */
     private int numberMeasurements;
-    
+
     /**
      * Indicates if the container has been picked.
      */
@@ -70,20 +74,21 @@ public class ContainerImp implements Container {
 
     private final int EXPAND = 2;
 
-
     /**
-     * Constructs a new ContainerImp with the specified id, code, capacity, and type.
+     * Constructs a new ContainerImp with the specified id, code, capacity, and
+     * type.
      *
      * @param id the unique identifier of the container
      * @param code the code of the container
      * @param capacity the capacity of the container
      * @param type the type of the container
      */
-    public ContainerImp( String id,String code, int capacity, ContainerType type) {
+    public ContainerImp(String id, String code, int capacity, ContainerType type) {
         this.code = code;
         this.capacity = capacity;
         this.type = type;
         this.measurements = new MeasurementImp[MAX];
+        this.load = 0;
     }
 
     /**
@@ -107,6 +112,15 @@ public class ContainerImp implements Container {
     }
 
     /**
+     * Returns the current load of the container.
+     *
+     * @return the current load of the container
+     */
+    public double getLoad() {
+        return this.load;
+    }
+
+    /**
      * Returns the type of the container.
      *
      * @return the type of the container
@@ -124,7 +138,7 @@ public class ContainerImp implements Container {
     public String getId() {
         return this.id;
     }
-    
+
     /**
      * Checks if the container has been picked.
      *
@@ -133,7 +147,7 @@ public class ContainerImp implements Container {
     public boolean isPicked() {
         return picked;
     }
-    
+
     /**
      * Sets the picked status of the container.
      *
@@ -142,6 +156,14 @@ public class ContainerImp implements Container {
     public void setPicked(boolean picked) {
         this.picked = picked;
     }
+    
+    public void addLoad(double load) throws IllegalAccessException {
+        if(this.load + load > capacity) {
+            throw new IllegalAccessException("Load is bigger than capacity");
+        }
+        this.load += load;
+    }
+    
 
     /**
      * Returns an array of measurements associated with the container.
@@ -197,7 +219,8 @@ public class ContainerImp implements Container {
      *
      * @param msrmnt the measurement to add
      * @return true if the measurement was added successfully, false otherwise
-     * @throws MeasurementException if the measurement is null, has a negative value, or the date is invalid
+     * @throws MeasurementException if the measurement is null, has a negative
+     * value, or the date is invalid
      */
     @Override
     public boolean addMeasurement(Measurement msrmnt) throws MeasurementException {
@@ -220,12 +243,13 @@ public class ContainerImp implements Container {
     }
 
     /**
-     * Compares this container to the specified object.
-     * The result is true if and only if the argument is not null and is a ContainerImp object
-     * that has the same code as this object.
+     * Compares this container to the specified object. The result is true if
+     * and only if the argument is not null and is a ContainerImp object that
+     * has the same code as this object.
      *
      * @param obj the object to compare this container against
-     * @return true if the given object represents a container equivalent to this container, false otherwise
+     * @return true if the given object represents a container equivalent to
+     * this container, false otherwise
      */
     @Override
     public boolean equals(Object obj) {
@@ -246,7 +270,7 @@ public class ContainerImp implements Container {
      */
     @Override
     public String toString() {
-        String result =  "ContainerImp{" + "id=" + id + ", code=" + code + ", capacity=" + capacity + type + "\n"
+        String result = "ContainerImp{" + "id=" + id + ", code=" + code + ", capacity=" + capacity + type + "\n"
                 + "Measurements:\n";
 
         for (int i = 0; i < numberMeasurements; i++) {
