@@ -253,12 +253,4 @@ public class ContainerImp implements Container {
         }
         return result;
     }
-
-    public boolean isPerishable() {
-        if (type instanceof ContainerTypeImp) {
-            return ((ContainerTypeImp) type).isPerishable();
-        }
-        return false;
-    }
-
 }

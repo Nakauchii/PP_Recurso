@@ -92,7 +92,7 @@ public class RouteImp implements com.estg.pickingManagement.Route {
      * @param aidbox The aid box to check.
      * @return true if the vehicle can pick the aid box, false otherwise.
      */
-    private boolean canVehiclePickAidbox(AidBox aidbox) {
+    protected boolean canVehiclePickAidbox(AidBox aidbox) {
         Container[] containers = aidbox.getContainers();
         for (int i = 0; i < containers.length; i++) {
             if (((VehicleImp) vehicle).canPick(containers[i])) {

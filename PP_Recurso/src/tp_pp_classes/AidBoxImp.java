@@ -353,6 +353,19 @@ public class AidBoxImp implements AidBox {
     }
 
 
+    public boolean hasPerishableContainer() {
+        for (int i = 0; i < numberContainers; i++) {
+            if (containers[i].getType() instanceof ContainerTypeImp) {
+                if (((ContainerTypeImp) containers[i].getType()).isPerishable()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+
     /**
      * Indicates whether some other object is "equal to" this one.
      *
